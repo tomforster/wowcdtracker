@@ -1,0 +1,17 @@
+<ul class="clist">
+    <li>
+        <img ng-repeat="wowclass in user.classes"
+             class="sprite"
+             ng-attr-src="img/classicons/{{wowclass.icon}}"
+             ng-click="user.focus = wowclass.id">
+        </img>
+    </li>
+    <ul class ="specul" ng-repeat="wowclass in user.classes" ng-show="user.focus === wowclass.id">
+        <li ng-repeat="spec in wowclass.specs">
+            <img class="spritesm"
+                 ng-attr-src="img/specicons/{{user.getSpecById(spec).wowicon}}">
+                {{user.getSpecById(spec).name}}
+            <input class="incbutton" type="button" ng-click="user.addPlayer($parent.$index,$index)" value="+">
+        </li>
+    </ul>
+</ul>

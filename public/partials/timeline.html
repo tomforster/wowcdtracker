@@ -1,0 +1,126 @@
+<svg ng-attr-width={{timeline.timelineView.width}}
+     ng-attr-height = {{timeline.timelineView.height}}
+     vbox="{{timeline.timelineView.x}} 0 {{timeline.timelineView.width}} {{timeline.timelineView.height}}"
+     class="timeline">
+    <g>
+        <g id="abilities">
+            <g ng-repeat="player in timeline.abilities">
+                <image xlink:href="~/Content/Empty.png"
+                        ngxlink="img/classicons/ClassIcon_Priest.png"
+                       ng-attr-x="s0"
+                       ng-attr-y={{timeline.timelineView.axisPositionPx+timeline.timelineView.levelheightPx*$index+timeline.timelineView.gapsize*($index+1)}}
+                       ng-attr-width={{timeline.timelineView.widthNamesAreaPx}}
+                       ng-attr-height={{timeline.timelineView.levelheightPx}}
+                       bs-tooltip data-container="body" title={{player.name}} data-placement="top"></image>
+            </g>
+        </g>
+    </g>
+    <g ng-attr-transform="translate({{timeline.timelineView.widthNamesAreaPx}},0)">
+        <g id="phases">
+            <g ng-repeat="phase in timeline.phases">
+                <rect ng-attr-x={{timeline.timelineView.sToPx(phase.time)}}
+                    ng-attr-y={{timeline.timelineView.axisPositionPx}}
+                    ng-attr-width={{timeline.timelineView.sToPx(phase.duration)}}
+                    ng-attr-height={{timeline.timelineView.height-timeline.timelineView.axisPositionPx-phase.phaseLevel*timeline.timelineView.phaseLabelHeightPx}}
+                    class={{timeline.colorList[$index]}}
+                    fill={{phase.color}}
+                    opacity="0.0"
+                    ></rect>
+                <!--<text ng-attr-x={{timeline.timelineView.sToPx(phase.time)}}
+                      ng-attr-y={{timeline.timelineView.height-phase.phaseLevel*timeline.timelineView.phaseLabelHeightPx}}
+                      class="phasetext">
+                    {{phase.name}}
+                </text>-->
+                <rect ng-attr-x={{timeline.timelineView.sToPx(phase.time)}}
+                    ng-attr-y={{timeline.timelineView.height-(phase.phaseLevel+1)*timeline.timelineView.phaseLabelHeightPx}}
+                    ng-attr-width={{timeline.timelineView.sToPx(phase.duration)}}
+                    ng-attr-height={{timeline.timelineView.phaseLabelHeightPx}}
+                    fill={{phase.color}}
+                    bs-tooltip data-container="body" title={{phase.name}} data-placement="top">
+                </rect>
+            </g>
+        </g>
+        <g id="axis">
+            <line ng-attr-x1={{-timeline.timelineView.widthNamesAreaPx}}
+                  ng-attr-x2={{timeline.timelineView.width}}
+                  ng-attr-y1={{timeline.timelineView.axisPositionPx}}
+                  ng-attr-y2={{timeline.timelineView.axisPositionPx}}
+                  class="axisline"></line>
+            <g ng-repeat="tick in timeline.ticks">
+                <line ng-attr-x1={{timeline.tickLengthPx*$index}}
+                      ng-attr-x2={{timeline.tickLengthPx*$index}}
+                      ng-attr-y1="0"
+                      ng-attr-y2={{timeline.timelineView.height}}
+                      class="axisline"></line>
+                <text ng-attr-x="{{timeline.tickLengthPx*$index+1}}"
+                      ng-attr-y="{{timeline.timelineView.labelPositionPx}}"
+                      style="font-size:12">
+                    {{tick}}
+                </text>
+            </g>
+        </g>
+        <g id="events">
+            <rect ng-repeat="event in timeline.events"
+                  ng-attr-x={{timeline.timelineView.sToPx(event.time)}}
+                  ng-attr-y={{timeline.timelineView.axisPositionPx}}
+                  ng-attr-width="{{timeline.timelineView.sToPx(event.duration) < 3 && 3 || timeline.timelineView.sToPx(event.duration)}}"
+                  ng-attr-height={{timeline.timelineView.height-timeline.timelineView.axisPositionPx-event.phaseLevel*timeline.timelineView.phaseLabelHeightPx}}
+                  class="event"
+                  bs-tooltip data-container="body" title={{event.name}} data-placement="top"></rect>
+        </g>
+        <g id="abilities">
+            <g ng-repeat="player in timeline.abilities">
+                <g ng-repeat="abilityEntry in player.abilityArray">
+                    <rect ng-attr-x={{timeline.timelineView.sToPx(abilityEntry.time)}}
+                          ng-attr-y={{timeline.timelineView.axisPositionPx+timeline.timelineView.levelheightPx*$parent.$index+timeline.timelineView.gapsize*($parent.$index+1)}}
+                          ng-attr-width={{timeline.timelineView.sToPx(abilityEntry.ability.cooldown)}}
+                          ng-attr-height={{timeline.timelineView.levelheightPx}}
+                          style="fill:#{{abilityEntry.ability.colour}}; opacity:.3"
+                          ng-attr-rx={{timeline.timelineView.corner}}
+                          ng-attr-ry={{timeline.timelineView.corner}}
+                          pointer-events="none"></rect>
+                    <path  ng-show="timeline.focus == abilityEntry.cid"
+                           ng-attr-d="M {{timeline.timelineView.sToPx(abilityEntry.time)-5}}
+                      {{timeline.timelineView.axisPositionPx+timeline.timelineView.levelheightPx*$parent.$index+timeline.timelineView.gapsize*($parent.$index+1)}}
+                      l 0 {{timeline.timelineView.levelheightPx}}
+                      l -10 {{-timeline.timelineView.levelheightPx/2}}"
+                           style="fill:#{{abilityEntry.ability.colour}}">
+                        <animate id="one" attributeName="opacity"
+                                 from="1"  to="0.1"
+                                 begin="0s; two.end" dur="1s"/>
+                        <animate id="two" attributeName="opacity"
+                                 from="0.1"  to="1"
+                                 begin="one.end" dur="1s"/>
+                    </path>
+                    <path ng-show="timeline.focus == abilityEntry.cid"
+                          ng-blah1="{{timeline.focus - abilityEntry.cid}}"
+                          ng-blah2="{{timeline.focus}}"
+                          ng-blah3="{{abilityEntry.cid}}"
+                          ng-attr-d="M {{timeline.timelineView.sToPx(abilityEntry.time)+timeline.timelineView.sToPx(abilityEntry.ability.duration)+5}}
+                      {{timeline.timelineView.axisPositionPx+timeline.timelineView.levelheightPx*$parent.$index+timeline.timelineView.gapsize*($parent.$index+1)}}
+                      l 0 {{timeline.timelineView.levelheightPx}}
+                      l 10 {{-timeline.timelineView.levelheightPx/2}}"
+                          style="fill:#{{abilityEntry.ability.colour}}">
+                        <animate id="one" attributeName="opacity"
+                                 from="1"  to="0.1"
+                                 begin="0s; two.end" dur="1s"/>
+                        <animate id="two" attributeName="opacity"
+                                 from="0.1"  to="1"
+                                 begin="one.end" dur="1s"/>
+                    </path>
+                    <rect draggable
+                          ng-attr-x={{timeline.timelineView.sToPx(abilityEntry.time)}}
+                          ng-attr-y={{timeline.timelineView.axisPositionPx+timeline.timelineView.levelheightPx*player.level+timeline.timelineView.gapsize*(player.level+1)}}
+                          ng-attr-width={{timeline.timelineView.sToPx(abilityEntry.ability.duration)}}
+                          ng-attr-height={{timeline.timelineView.levelheightPx}}
+                          style="fill:#{{abilityEntry.ability.colour}}; opacity:1"
+                          handle={{abilityEntry.cid}}
+                          ng-attr-rx={{timeline.timelineView.corner}}
+                          ng-attr-ry={{timeline.timelineView.corner}}
+                          bs-tooltip data-container="body" title={{abilityEntry.ability.name}} data-placement="top">
+                    </rect>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

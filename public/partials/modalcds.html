@@ -1,0 +1,24 @@
+<div class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Select Ability to add:</h4>
+            </div>
+            <div class="modal-body">
+                <ul>
+                    <li ng-repeat="player in timeline.modalAbilities" class="ul_cd_List">
+                        <ul class="ul_cd_List">
+                            <li>{{player.player.name}}</li>
+                            <li class="li_cd_Entry"
+                                ng-repeat="ability in player.abilities"
+                                ng-click="selectCooldown(player.player,ability)"
+                                ng-class="{'redbg' : !ability.isready}">
+                                <img class='li_cd_Icon' ng-attr-src="img/cdicons/{{ability.ability.icon}}">
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

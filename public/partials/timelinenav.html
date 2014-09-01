@@ -1,0 +1,37 @@
+<svg ng-attr-width={{timeline.timelineNavView.width}}
+     ng-attr-height = {{timeline.timelineNavView.height}}
+     vbox="0 0 {{timeline.timelineNavView.width}} {{timeline.timelineNavView.height}}"
+     class="timeline">
+    <g id="phases">
+        <g ng-repeat="phase in timeline.phases">
+            <rect ng-attr-x={{timeline.timelineNavView.sToPx(phase.time)}}
+                  ng-attr-y="0"
+                  ng-attr-width={{timeline.timelineNavView.sToPx(phase.duration)}}
+                  ng-attr-height={{timeline.timelineNavView.height}}
+                  fill="none"></rect>
+            <rect ng-attr-x={{timeline.timelineNavView.sToPx(phase.time)}}
+                  ng-attr-y={{timeline.timelineNavView.height-(phase.phaseLevel+1)*timeline.timelineNavView.phaseLabelHeightPx}}
+                  ng-attr-width={{timeline.timelineNavView.sToPx(phase.duration)}}
+                  ng-attr-height={{timeline.timelineNavView.phaseLabelHeightPx}}
+                  fill={{phase.color}}>
+            </rect>
+        </g>
+    </g>
+    <g id="events">
+        <rect ng-repeat="event in timeline.events"
+              ng-attr-x={{timeline.timelineNavView.sToPx(event.time)}}
+              ng-attr-y="0"
+              ng-attr-width="{{timeline.timelineNavView.sToPx(event.duration) < 2 && 2 || timeline.timelineNavView.sToPx(event.duration)}}"
+              ng-attr-height={{timeline.timelineNavView.height}}
+                class="event"></rect>
+    </g>
+    <g id="ghostbox">
+        <rect ng-attr-x={{timeline.timelineNavView.gnavx}}
+              ng-attr-y="0"
+              ng-attr-width={{timeline.timelineNavView.sToPx(timeline.timelineView.lengthS)}}
+              ng-attr-height={{timeline.timelineNavView.height}}
+              ng-attr-fill={{"grey"}}
+              style="opacity:.6"
+                pointer-events="none"></rect>
+    </g>
+</svg>
