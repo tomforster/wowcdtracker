@@ -99,7 +99,6 @@ var Phase = function(name,duration,fixed){
     }
 }
 var colors = colorSlicer.getColors(30,180);
-
 var colorIndex = 0;
 var SimplePhaseInfo = function(name,time,duration,eventList,phaseLevel,color){
     this.name = name;
@@ -142,6 +141,7 @@ var TimelineData = function(phases,mainPhaseStr){
     this.update = function(){
         console.log("updating timelinedata");
         var time = 0;
+        colorIndex = 0;
         var mainPhase = self.getPhaseByName(mainPhaseStr).generateSimplePhase(time);
         var lists = recurse(mainPhase,0);
         phaseListFull = lists[0];

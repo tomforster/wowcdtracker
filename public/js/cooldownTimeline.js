@@ -47,7 +47,7 @@ wowcdapp.directive('draggable', function($document){
                     dy = event.offsetY - start.y;
                     start.x = event.offsetX;
                     start.y = event.offsetY;
-                    console.log("start: "+start.x+" offset: "+event.offsetX+" dx: "+dx);
+                    //console.log("start: "+start.x+" offset: "+event.offsetX+" dx: "+dx);
                     scope.$emit("drag",attrs.handle,dx,dy);
                 })
                 $document.on("click",function(event){

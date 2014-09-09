@@ -24,20 +24,6 @@ wowcdapp.factory('wowdataloader', function($http,$q,$state,$rootScope,wowdata){
             if (wowdata.classes.length > 0) return wowdata.classes;
             var promise = $http({method: 'GET',url:('/classes')}).success(function(data,status,headers,config) {
                 wowdata.classes = angular.fromJson(data);
-                for (var i = 0; i < wowdata.classes.length; i++){
-                    if (wowdata.classes[i].abilities === "")
-                        wowdata.classes[i].abilities = [];
-                    else
-                        wowdata.classes[i].abilities = wowdata.classes[i].abilities.split(" ");
-                    if (wowdata.classes[i].talents === "")
-                        wowdata.classes[i].talents = [];
-                    else
-                        wowdata.classes[i].talents = wowdata.classes[i].talents.split(" ");
-                    if (wowdata.classes[i].specs === "")
-                        wowdata.classes[i].specs = [];
-                    else
-                        wowdata.classes[i].specs = wowdata.classes[i].specs.split(" ");
-                }
             });
             return promise;
         },
@@ -46,12 +32,6 @@ wowcdapp.factory('wowdataloader', function($http,$q,$state,$rootScope,wowdata){
             if (wowdata.specs.length > 0) return wowdata.specs;
             var promise = $http({method: 'GET',url:('/specs')}).success(function(data,status,headers,config) {
                 wowdata.specs = angular.fromJson(data);
-                for (var i = 0; i < wowdata.specs.length; i++){
-                    if (wowdata.specs[i].abilities === "")
-                        wowdata.specs[i].abilities = [];
-                    else
-                        wowdata.specs[i].abilities = wowdata.specs[i].abilities.split(" ");
-                }
             });
             return promise;
         },

@@ -19,25 +19,26 @@
 </head>
 <body>
 <main>
-    <div class="navbar navbar-default" role="navigation" bs-navbar>
-        <div class="navbar-header">
-            <a class="navbar-brand" href="#">Raid Cooldown Planner v{{version}}</a>
+
+        <div class="navbar navbar-default" role="navigation" bs-navbar>
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Raid Cooldown Planner v{{version}}</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li data-match-route="/settings"><a href="#/settings">Raid Setup</a></li>
+                <li data-match-route="/timeline"><a href="#/timeline">Timeline</a></li>
+                <li data-match-route="/export"><a href="#/export">Export</a></li>
+            </ul>
         </div>
-        <ul class="nav navbar-nav">
-            <li data-match-route="/settings"><a href="#/settings">Raid Setup</a></li>
-            <li data-match-route="/timeline"><a href="#/timeline">Timeline</a></li>
-            <li data-match-route="/export"><a href="#/export">Export</a></li>
+        <div class="panel panel-default" ui-view style="width: 1044px; margin-left: auto;
+        margin-right: auto;
+        padding-left:10px;
+        padding-right:10px;
+        padding-bottom:10px;
+        padding-top:1px"></div>
+        <ul id="loading" ng-show="loadingView">
+            <li class="bar" ng-repeat="i in [0,1,2,3,4,5,6,7,8,9]"></li>
         </ul>
-    </div>
-    <div ui-view style="width: 1044px; margin-left: auto;
-    margin-right: auto;
-    padding-left:10px;
-    padding-right:10px;
-    padding-bottom:10px;
-    padding-top:1px"></div>
-    <ul id="loading" ng-show="loadingView">
-        <li class="bar" ng-repeat="i in [0,1,2,3,4,5,6,7,8,9]"></li>
-    </ul>
 </main>
 <footer><p style="font-size:12px; text-align:center"><br><br>© 2014 WowRaidTools</p></footer>
 </body>
