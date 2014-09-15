@@ -3,7 +3,7 @@
      vbox="{{timeline.timelineView.x}} 0 {{timeline.timelineView.width}} {{timeline.timelineView.height}}"
      class="timeline">
     <g>
-        <g id="abilities">
+        <g id="players">
             <g ng-repeat="player in timeline.abilities">
                 <image xlink:href="~/Content/Empty.png"
                         ngxlink="img/classicons/ClassIcon_Priest.png"
@@ -113,7 +113,7 @@
                           ng-attr-y={{timeline.timelineView.axisPositionPx+timeline.timelineView.levelheightPx*player.level+timeline.timelineView.gapsize*(player.level+1)}}
                           ng-attr-width={{timeline.timelineView.sToPx(abilityEntry.ability.duration)}}
                           ng-attr-height={{timeline.timelineView.levelheightPx}}
-                          style="fill:#{{abilityEntry.ability.colour}}; opacity:1"
+                          style="fill:#{{abilityEntry.ability.colour}}; opacity:1;stroke:#ffffff;stroke-opacity:0.9;stroke-width:2px"
                           handle={{abilityEntry.cid}}
                           ng-attr-rx={{timeline.timelineView.corner}}
                           ng-attr-ry={{timeline.timelineView.corner}}

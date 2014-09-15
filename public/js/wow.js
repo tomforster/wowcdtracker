@@ -2,7 +2,7 @@
  * Created by Tom on 28/03/14.
  */
 
-var wowcdapp = angular.module('wowcdapp',['mgcrea.ngStrap','ui.router']);
+var wowcdapp = angular.module('wowcdapp',['mgcrea.ngStrap','ui.router','LocalStorageModule']);
 
 wowcdapp.factory('wowdataloader', function($http,$q,$state,$rootScope,wowdata){
     return {
@@ -78,25 +78,54 @@ wowcdapp.factory('wowdata', function(){
         }
     }
 });
-wowcdapp.service('raiddata',function(wowdata){
+wowcdapp.service('raiddata',function(wowdata,localStorageService,$rootScope,$timeout){
     this.players = [];
     this.raidsize = 10;
     this.groups = [];
     var numplayers = 0;
     var uid = 0;
-    for(var i = 0; i < this.raidsize; i++){
-        this.players[i] = {};
+    var lsString = localStorageService.get('wowbasiccdsraid');
+    if(lsString === null){
+        console.log('no local storage detected');
+        for(var i = 0; i < this.raidsize; i++){
+            this.players[i] = {};
+        }
+        for(var i = 0; i < this.raidsize/5; i++){
+            this.groups[i] = {players:this.players.slice(i*5,(i+1)*5)}
+        }
+    }else{
+
+        this.players = lsString;
+        uid = parseInt(localStorageService.get('wowbasiccdsuid'));
+        numplayers = parseInt(localStorageService.get('wowbasiccdsnumplayers'));
+        for(var i = 0; i < this.raidsize/5; i++){
+            this.groups[i] = {players:this.players.slice(i*5,(i+1)*5)}
+        }
+
     }
-    for(var i = 0; i < this.raidsize/5; i++){
-        this.groups[i] = {players:this.players.slice(i*5,(i+1)*5)}
+
+    this.saveRaid = function(){
+        localStorageService.set('wowbasiccdsraid',angular.toJson(this.players));
+        localStorageService.set('wowbasiccdsuid',angular.toJson(uid));
+        localStorageService.set('wowbasiccdsnumplayers',angular.toJson(numplayers));
     }
+
     this.addPlayer = function(cla,spec){
         if(numplayers < this.raidsize){
             var name_suffix = 1;
-            for (var i = 0; i < numplayers; i++){
-                if(this.players[i].spec === spec) name_suffix++;
-            }
+            var name_valid = true;
             var name = spec.name+" "+cla.name+" "+name_suffix;
+            //check if name exists, if so, increment suffix
+            do{
+                name_valid = true;
+                for (var i = 0; i < numplayers; i++){
+                    if(this.players[i].name === name){
+                        name_valid = false;
+                        name = spec.name+" "+cla.name+" "+name_suffix++;
+                        break;
+                    }
+                }
+            }while(!name_valid);
             this.players[numplayers] = {uid:uid,name:name,class:cla,spec:spec,abilities:wowdata.getPlayerAbilities(cla,spec)};
             uid++;
             numplayers++;
@@ -136,6 +165,9 @@ wowcdapp.service('raiddata',function(wowdata){
         }
         return null;
     }
+
+
+
 });
 wowcdapp.service('tracker',function(wowdata,raiddata){
     var id = 0;
@@ -171,7 +203,9 @@ wowcdapp.service('tracker',function(wowdata,raiddata){
     this.editAbility = function(handle,dx,dy){
         //check is this a valid position
         //console.log(dx);
-        abilityEntries[parseInt(handle)].time += dx;
+        var handle = parseInt(handle);
+        abilityEntries[handle].time += dx;
+        console.log(abilityEntries[handle].ability.name);
     }
     var getAbilityID = function(){
         return id++;
@@ -241,6 +275,7 @@ wowcdapp.service('fightdata',function(){
     this.settingsState = -1;
     this.currentfight = {};
 })
+//setup views
 wowcdapp.config(function($stateProvider, $urlRouterProvider){
     $urlRouterProvider.otherwise("/settings");
     $stateProvider
@@ -284,18 +319,21 @@ wowcdapp.controller('userCtrl', function ($scope, $rootScope, wowdata, raiddata,
     this.fightdata = fightdata;
     this.fightdata.currentfight = this.fightlist[0];
     this.raid = raiddata;
+    $scope.players = this.raid.players;
     this.addPlayer = function(cla,spec){
         self.raid.addPlayer(wowdata.classes[cla], wowdata.getSpecById(wowdata.classes[cla].specs[spec]));
     };
     this.removePlayer = function(index){
         self.raid.removePlayer(index);
     }
-    $rootScope.loadingView = false;
     this.classes = wowdata.classes;
     this.getSpecById = function(spec){
         return wowdata.getSpecById(spec);
     }
     this.focus = "";
+    $scope.$watch('players',function(){
+        self.raid.saveRaid();
+    },true);
 });
 wowcdapp.directive('classlist', function(wowdata){
     return {

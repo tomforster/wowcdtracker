@@ -7,7 +7,7 @@ wowcdapp.directive('timeline', function(){
         templateUrl: 'partials/timeline.html',
         link: function(scope, element, attrs) {
             element.on("click", function(event){
-                console.log("clicked timeline");
+                //console.log("clicked timeline");
                 scope.open(event.offsetX);
             })
         }
@@ -21,7 +21,7 @@ wowcdapp.directive('draggable', function($document){
             var mousemoved = false;
             //capture clicks
             element.on("click", function(event){
-                console.log('clicked draggable');
+                //console.log('clicked draggable');
                 if(mousemoved){
                     scope.$emit("undrag",dx,dy);
                 }
@@ -55,7 +55,7 @@ wowcdapp.directive('draggable', function($document){
                     event.preventDefault();
                     event.stopPropagation();
                     scope.$emit("undrag",dx,dy);
-                    console.log('unbound draggable');
+                    //console.log('unbound draggable');
                     $document.unbind("mousemove");
                     $document.unbind("click");
                 })
@@ -122,7 +122,7 @@ wowcdapp.controller('timelineCtrl', function($scope, $rootScope, $modal, $window
         $scope.$apply();
     });
     $scope.$on('undrag',function(){
-        console.log('undrag');
+        //console.log('undrag');
         $scope.drag = false;
     });
     $scope.setWindow = function(offsetX){
@@ -157,9 +157,9 @@ wowcdapp.controller('timelineCtrl', function($scope, $rootScope, $modal, $window
         self.update();
     }
     $scope.open = function(time) {
-        console.log("opening ability pane")
+        //console.log("opening ability pane")
         if($scope.drag){
-            console.log("cancel due to drag")
+            //console.log("cancel due to drag")
             return;
         }
         self.modalAbilities = [];
