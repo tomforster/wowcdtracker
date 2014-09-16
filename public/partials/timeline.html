@@ -6,7 +6,7 @@
         <g id="players">
             <g ng-repeat="player in timeline.abilities">
                 <image xlink:href="~/Content/Empty.png"
-                        ngxlink="img/classicons/ClassIcon_Priest.png"
+                        ngxlink="img/specicons/{{player.icon}}"
                        ng-attr-x="s0"
                        ng-attr-y={{timeline.timelineView.axisPositionPx+timeline.timelineView.levelheightPx*$index+timeline.timelineView.gapsize*($index+1)}}
                        ng-attr-width={{timeline.timelineView.widthNamesAreaPx}}

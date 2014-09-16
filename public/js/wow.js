@@ -204,8 +204,12 @@ wowcdapp.service('tracker',function(wowdata,raiddata){
         //check is this a valid position
         //console.log(dx);
         var handle = parseInt(handle);
-        abilityEntries[handle].time += dx;
-        console.log(abilityEntries[handle].ability.name);
+        for(var i = 0; i < abilityEntries.length; i++){
+            if(abilityEntries[i].cid === handle){
+                abilityEntries[i].time += dx;
+                break;
+            }
+        }
     }
     var getAbilityID = function(){
         return id++;
@@ -233,7 +237,12 @@ wowcdapp.service('tracker',function(wowdata,raiddata){
         if(sortType === 'c'){
             abilityEntries.sort(function(a,b){return b.pid - a.pid});
             abilityEntries.forEach(function(abilityEntry,cid){
-                timelineLevels[abilityEntry.pid] = {uid:abilityEntry.pid,name:raiddata.getPlayerByUID(abilityEntry.pid).name,abilityArray:[]};
+                timelineLevels[abilityEntry.pid] = {
+                    uid:abilityEntry.pid,
+                    name:raiddata.getPlayerByUID(abilityEntry.pid).name,
+                    icon:raiddata.getPlayerByUID(abilityEntry.pid).spec.wowicon,
+                    abilityArray:[]
+                };
             });
             abilityEntries.forEach(function(abilityEntry,cid){
                 timelineLevels[abilityEntry.pid].abilityArray.push(abilityEntry);
