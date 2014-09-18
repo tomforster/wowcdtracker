@@ -1,0 +1,143 @@
+.incbutton {
+  height: 18px;
+  width: 18px;
+  padding: 0;
+  top: 0;
+  right: 0;
+  line-height: 100%;
+  font-weight: bold;
+  float: right; }
+
+.clist {
+  list-style-type: none;
+  padding: 0px;
+  margin: 0px;
+  margin-left: auto;
+  margin-right: auto; }
+
+.specul {
+  padding-top: 1px;
+  padding-left: 2px;
+  list-style-type: none;
+  border-style: solid;
+  border-width: 0px; }
+
+.div_raid {
+  vertical-align: top; }
+
+.ul_raid {
+  list-style-type: none;
+  margin: 2px;
+  padding: 0; }
+
+.li_player_name {
+  width: 120px; }
+
+.ul_cd_List {
+  list-style-type: none;
+  margin: 0;
+  padding: 0; }
+
+.li_cd_Entry {
+  position: relative;
+  margin: 2px;
+  padding: 0;
+  display: inline-block; }
+
+.li_cd_Icon {
+  width: 35px;
+  height: 35px; }
+
+.redborder {
+  outline: solid #ff0000; }
+
+.redbg {
+  position: relative; }
+
+.redbg:before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 0, 0, 0.51); }
+
+#loading {
+  list-style: none;
+  margin: 250px auto;
+  text-align: center;
+  width: 400px; }
+
+/* Loading animation inspired by http://codepen.io/joni/details/FiKsd */
+@-webkit-keyframes loader {
+  50% {
+    height: 6px;
+    margin-top: 74px;
+    opacity: .1; } }
+.bar {
+  height: 80px;
+  width: 6px;
+  border-radius: 3px;
+  background: #333;
+  display: inline-block;
+  margin: 0 2px;
+  -webkit-animation: loader 1.3s infinite; }
+
+.modal {
+  background: #CCC;
+  height: 100%;
+  opacity: .75;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 999; }
+
+.bar:nth-child(1) {
+  -webkit-animation-delay: .1s; }
+
+.bar:nth-child(2) {
+  -webkit-animation-delay: .2s; }
+
+.bar:nth-child(4) {
+  -webkit-animation-delay: .4s; }
+
+.bar:nth-child(5) {
+  -webkit-animation-delay: .5s; }
+
+.bar:nth-child(6) {
+  -webkit-animation-delay: .6s; }
+
+.bar:nth-child(7) {
+  -webkit-animation-delay: .7s; }
+
+.bar:nth-child(8) {
+  -webkit-animation-delay: .8s; }
+
+.bar:nth-child(9) {
+  -webkit-animation-delay: .9s; }
+
+.bar:nth-child(10) {
+  -webkit-animation-delay: 1s; }
+
+.sprite {
+  width: 50px;
+  height: 50px; }
+
+.spritesm {
+  width: 18px;
+  height: 18px; }
+
+.raidicon {
+  width: 30px;
+  height: 30px;
+  margin-right: 1px;
+  margin-left: 1px; }
+
+input:checked + img {
+  outline: 2px solid red;
+  outline-offset: -2px; }
+
+/*# sourceMappingURL=wow.css.map */
