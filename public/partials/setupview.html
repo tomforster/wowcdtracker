@@ -1,19 +1,26 @@
-<h4>Encounter Setup</h4>
-<div>
-    <h4>Select Encounter</h4>
-    <button type="button"
-            class="btn btn-default"
-            ng-model="user.fightdata.currentfight"
-            ng-options="fightentry.name+' '+fightentry.difficulty for fightentry in user.fightlist"
-            bs-select>
-        Select Encounter <span class="caret"></span>
-    </button>
-</div>
-<div ng-show="fight.fightdata.state === 1">
-    <h4>Import String (NYI)</h4>
-    <textarea style="width:100%; height:300px"></textarea>
-</div>
-<div class = "div_raid">
-    <h4>Setup Raid</h4>
-    <raidlist></raidlist>
+<div class="panel panel-default" style="width: 800px; margin-left: auto;
+    margin-right: auto;
+    padding-left:10px;
+    padding-right:10px;
+    padding-bottom:10px;
+    padding-top:1px">
+    <h4>Encounter Setup</h4>
+    <div>
+        <h4>Select Encounter</h4>
+        <button type="button"
+                class="btn btn-default"
+                ng-model="user.fightdata.currentfight"
+                ng-options="fightentry.name+' '+fightentry.difficulty for fightentry in user.fightlist"
+                bs-select>
+            Select Encounter <span class="caret"></span>
+        </button>
+    </div>
+    <div ng-show="fight.fightdata.state === 1">
+        <h4>Import String (NYI)</h4>
+        <textarea style="width:100%; height:300px"></textarea>
+    </div>
+    <div class = "div_raid">
+        <h4>Setup Raid</h4>
+        <raidlist></raidlist>
+    </div>
 </div>
