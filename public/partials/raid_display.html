@@ -1,19 +1,71 @@
-<div ng-repeat="group in user.raid.groups track by $index">
-    <table class="table table-condensed table-hover table-bordered">
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>Class</th>
-            <th>Spec</th>
-            <th>Remove</th>
-        </tr>
-        </thead>
-        Group {{$index+1}}
-        <tr ng-repeat="player in group.players track by $index">
-            <td style="width:25%"><input style="width:100%" type="text" ng-model="player.name"></td>
-            <td>{{player.class.name}}</td>
-            <td>{{player.spec.name}}</td>
-            <td><button ng-click="user.removePlayer($index)">Remove</button></td>
-        </tr>
-    </table>
+<div class="form-inline">
+    <!-- add to raid -->
+    <h5>Add Player</h5>
+    <div class="form-group panel panel-default" style="padding:4px; width:100%">
+        <!-- player name -->
+        <input type="text" ng-model="user.name" class="form-control" style="height:30px" placeholder="Player name (optional)">
+        <!-- player class -->
+        <div class="btn-group" ng-model="user.classid" bs-radio-group style="padding:0px 0px 0px 10px">
+            <label class="btn btn-default" ng-repeat="wowclass in user.classes" style="padding: 0px 0px">
+                <input type="radio"
+                       class="btn btn-default"
+                       value="{{$index}}"
+                        ng-click="user.classChange($index)">
+                <img class="raidicon"
+                     ng-attr-src="img/classicons/{{wowclass.icon}}">
+                </img>
+            </label>
+        </div>
+        <!-- player spec -->
+        <div style="padding:0px 6px; display: inline-block">
+            <div ng-repeat="wowclass in user.classes" class="btn-group" ng-model="user.specid" bs-radio-group>
+                <label class="btn btn-default" ng-repeat="wowspec in wowclass.specs" style="padding: 0px 0px" ng-show="$parent.$index === user.classid">
+                    <input type="radio"
+                           class="btn btn-default"
+                           value="{{$index}}">
+                    <img class="raidicon"
+                         ng-attr-src="img/specicons/{{user.getSpecById(wowspec).wowicon}}">
+                    </img>
+                </label>
+            </div>
+        </div>
+        <button class="btn btn-default glyphicon glyphicon-plus" style="float: right" ng-click="user.addPlayer()"></button>
+    </div>
+    <!-- current raid -->
+    <h5>Raid List</h5>
+    <div ng-repeat="player in user.raid.players track by $index" class="form-group panel panel-default" style="padding:4px; width:100%">
+        <!-- player name -->
+        <input type="text" ng-model="player.name" class="form-control" style="height:30px" readonly>
+        <!-- player class -->
+        <div class="btn-group" ng-model="player.class.name" bs-radio-group style="padding:0px 0px 0px 10px">
+            <label class="btn btn-default" ng-repeat="wowclass in user.classes" style="padding: 0px 0px">
+                <input type="radio"
+                       class="btn btn-default"
+                       value="{{wowclass.name}}"
+                       disabled>
+                <img class="raidicon"
+                     ng-attr-src="img/classicons/{{wowclass.icon}}">
+                </img>
+            </label>
+            </button>
+        </div>
+        <!-- player spec -->
+        <div style="padding:0px 6px; display: inline-block">
+            <div class="btn-group" ng-model="player.spec.id" bs-radio-group>
+                <label class="btn btn-default" ng-repeat="wowspec in player.class.specs" style="padding: 0px 0px">
+                    <input type="radio"
+                           class="btn btn-default"
+                           value="{{wowspec}}"
+                           disabled>
+                    <img class="raidicon"
+                         ng-attr-src="img/specicons/{{user.getSpecById(wowspec).wowicon}}">
+                    </img>
+                </label>
+            </div>
+        </div>
+        <button class="btn btn-default glyphicon glyphicon-minus" style="float: right" ng-click="user.removePlayer($index)"></button>
+    </div>
 </div>
+{{user.name}}
+{{user.classid}}
+{{user.specid}}

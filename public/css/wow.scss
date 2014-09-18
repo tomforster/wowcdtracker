@@ -13,7 +13,6 @@
   list-style-type:none;
   padding:0px;
   margin:0px;
-  width:550px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -133,4 +132,18 @@ $imgsize: 18px;
 .spritesm {
   width: $imgsize;
   height: $imgsize;
+}
+
+$imgsize: 30px;
+
+.raidicon {
+  width: $imgsize;
+  height: $imgsize;
+  margin-right: 1px;
+  margin-left: 1px;
+}
+
+input:checked + img{
+  outline:2px solid red;
+  outline-offset:-2px;
 }

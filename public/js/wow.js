@@ -2,7 +2,7 @@
  * Created by Tom on 28/03/14.
  */
 
-var wowcdapp = angular.module('wowcdapp',['mgcrea.ngStrap','ui.router','LocalStorageModule']);
+var wowcdapp = angular.module('wowcdapp',['mgcrea.ngStrap','ui.router','LocalStorageModule','angular-loading-bar']);
 
 wowcdapp.factory('wowdataloader', function($http,$q,$state,$rootScope,wowdata){
     return {
@@ -80,74 +80,53 @@ wowcdapp.factory('wowdata', function(){
 });
 wowcdapp.service('raiddata',function(wowdata,localStorageService,$rootScope,$timeout){
     this.players = [];
-    this.raidsize = 10;
-    this.groups = [];
-    var numplayers = 0;
+    this.raidsize = 20;
     var uid = 0;
     var lsString = localStorageService.get('wowbasiccdsraid');
     if(lsString === null){
         console.log('no local storage detected');
-        for(var i = 0; i < this.raidsize; i++){
-            this.players[i] = {};
-        }
-        for(var i = 0; i < this.raidsize/5; i++){
-            this.groups[i] = {players:this.players.slice(i*5,(i+1)*5)}
-        }
     }else{
 
         this.players = lsString;
         uid = parseInt(localStorageService.get('wowbasiccdsuid'));
-        numplayers = parseInt(localStorageService.get('wowbasiccdsnumplayers'));
-        for(var i = 0; i < this.raidsize/5; i++){
-            this.groups[i] = {players:this.players.slice(i*5,(i+1)*5)}
-        }
-
     }
 
     this.saveRaid = function(){
         localStorageService.set('wowbasiccdsraid',angular.toJson(this.players));
         localStorageService.set('wowbasiccdsuid',angular.toJson(uid));
-        localStorageService.set('wowbasiccdsnumplayers',angular.toJson(numplayers));
     }
 
-    this.addPlayer = function(cla,spec){
-        if(numplayers < this.raidsize){
-            var name_suffix = 1;
-            var name_valid = true;
-            var name = spec.name+" "+cla.name+" "+name_suffix;
-            //check if name exists, if so, increment suffix
-            do{
-                name_valid = true;
-                for (var i = 0; i < numplayers; i++){
-                    if(this.players[i].name === name){
-                        name_valid = false;
-                        name = spec.name+" "+cla.name+" "+name_suffix++;
-                        break;
+    this.addPlayer = function(name,cla,spec){
+        if(this.players.length < this.raidsize){
+            if(name === "") {
+                var name_suffix = 1;
+                var name_valid = true;
+                var name = spec.name + " " + cla.name + " " + name_suffix;
+                //check if name exists, if so, increment suffix
+                do {
+                    name_valid = true;
+                    for (var i = 0; i < this.players.length; i++) {
+                        if (this.players[i].name === name) {
+                            name_valid = false;
+                            name = spec.name + " " + cla.name + " " + name_suffix++;
+                            break;
+                        }
                     }
-                }
-            }while(!name_valid);
-            this.players[numplayers] = {uid:uid,name:name,class:cla,spec:spec,abilities:wowdata.getPlayerAbilities(cla,spec)};
+                } while (!name_valid);
+            }
+            this.players[this.players.length] = {uid:uid,name:name,class:cla,spec:spec,abilities:wowdata.getPlayerAbilities(cla,spec)};
             uid++;
-            numplayers++;
-        }
-        for(var i = 0; i < this.raidsize/5; i++){
-            this.groups[i] = {players:this.players.slice(i*5,(i+1)*5)}
         }
     }
     this.removePlayer = function(index){
         console.log('blah');
-        if((index >= 0) && (index < this.raidsize) && (index < numplayers)){
+        if((index >= 0) && (index < this.raidsize) && (index < this.players.length)){
             this.players.splice(index,1);
-            this.players[this.raidsize-1] = {};
-            numplayers--;
-        }
-        for(var i = 0; i < this.raidsize/5; i++){
-            this.groups[i] = {players:this.players.slice(i*5,(i+1)*5)}
         }
     }
     this.getAbilities = function(){
         var abilityList = [];
-        for(var i = 0; i < numplayers; i++){
+        for(var i = 0; i < this.players.length; i++){
             var abilities = this.players[i].abilities;
             for(var j = 0; j < abilities.length; j++){
                 abilityList.push({
@@ -319,7 +298,7 @@ wowcdapp.config(function($stateProvider, $urlRouterProvider){
 });
 wowcdapp.run(['$rootScope', function($root) {
     $root.loadingView = true;
-    $root.version = 0.7;
+    $root.version = 0.9;
 }]);
 wowcdapp.controller('userCtrl', function ($scope, $rootScope, wowdata, raiddata, fightdata) {
     var self = this;
@@ -329,9 +308,18 @@ wowcdapp.controller('userCtrl', function ($scope, $rootScope, wowdata, raiddata,
     this.fightdata.currentfight = this.fightlist[0];
     this.raid = raiddata;
     $scope.players = this.raid.players;
-    this.addPlayer = function(cla,spec){
-        self.raid.addPlayer(wowdata.classes[cla], wowdata.getSpecById(wowdata.classes[cla].specs[spec]));
+    this.classid = null;
+    this.specid = null;
+    this.name = "";
+    this.addPlayer = function(){
+        self.raid.addPlayer(self.name,wowdata.classes[self.classid], wowdata.getSpecById(wowdata.classes[self.classid].specs[self.specid]));
     };
+    this.classChange = function(index){
+        console.log(index);
+        if(index !== self.classid){
+            this.specid = null;
+        }
+    }
     this.removePlayer = function(index){
         self.raid.removePlayer(index);
     }
@@ -344,7 +332,7 @@ wowcdapp.controller('userCtrl', function ($scope, $rootScope, wowdata, raiddata,
         self.raid.saveRaid();
     },true);
 });
-wowcdapp.directive('classlist', function(wowdata){
+/*wowcdapp.directive('classlist', function(wowdata){
     return {
         restrict: 'E',
         templateUrl: 'partials/class_select.html',
@@ -369,7 +357,7 @@ wowcdapp.directive('classlist', function(wowdata){
             }
         }
     }
-});
+});*/
 wowcdapp.directive('raidlist',function(){
     return {
         restrict: 'E',
