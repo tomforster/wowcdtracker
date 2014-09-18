@@ -79,6 +79,7 @@ wowcdapp.factory('wowdata', function(){
     }
 });
 wowcdapp.service('raiddata',function(wowdata,localStorageService,$rootScope,$timeout){
+    var self = this;
     this.players = [];
     this.raidsize = 20;
     var uid = 0;
@@ -96,27 +97,47 @@ wowcdapp.service('raiddata',function(wowdata,localStorageService,$rootScope,$tim
         localStorageService.set('wowbasiccdsuid',angular.toJson(uid));
     }
 
+    generateName = function(cla,spec){
+        var name_suffix = 1;
+        var name_valid = true;
+        var name = spec.name + " " + cla.name + " " + name_suffix;
+        //check if name exists, if so, increment suffix
+        do {
+            name_valid = true;
+            for (var i = 0; i < self.players.length; i++) {
+                if (self.players[i].name === name) {
+                    name_valid = false;
+                    name = spec.name + " " + cla.name + " " + name_suffix++;
+                    break;
+                }
+            }
+        } while (!name_valid);
+        return name;
+    }
+
     this.addPlayer = function(name,cla,spec){
         if(this.players.length < this.raidsize){
             if(name === "") {
-                var name_suffix = 1;
-                var name_valid = true;
-                var name = spec.name + " " + cla.name + " " + name_suffix;
-                //check if name exists, if so, increment suffix
-                do {
-                    name_valid = true;
-                    for (var i = 0; i < this.players.length; i++) {
-                        if (this.players[i].name === name) {
-                            name_valid = false;
-                            name = spec.name + " " + cla.name + " " + name_suffix++;
-                            break;
-                        }
-                    }
-                } while (!name_valid);
+                var name = generateName(cla,spec);
             }
             this.players[this.players.length] = {uid:uid,name:name,class:cla,spec:spec,abilities:wowdata.getPlayerAbilities(cla,spec)};
             uid++;
         }
+    }
+    this.specChange = function(index,spec){
+    if((index >= 0) && (index < this.raidsize) && (index < this.players.length)){
+        var player = this.players[index];
+            //is name custom?
+            var nameArray = player.name.split(" ");
+            if(nameArray.length === 3){
+                if((nameArray[0] === player.spec.name) && (nameArray[1] === player.class.name) && (!isNaN(nameArray[2]))){
+                    player.spec = spec;
+                    player.name = generateName(player.class,player.spec)
+                }
+            }
+            player.spec = spec;
+        }
+        player.uid = uid++;
     }
     this.removePlayer = function(index){
         console.log('blah');
@@ -300,7 +321,7 @@ wowcdapp.run(['$rootScope', function($root) {
     $root.loadingView = true;
     $root.version = 0.9;
 }]);
-wowcdapp.controller('userCtrl', function ($scope, $rootScope, wowdata, raiddata, fightdata) {
+wowcdapp.controller('userCtrl', function ($scope, $rootScope, $window, wowdata, raiddata, fightdata) {
     var self = this;
     $rootScope.loadingView = false;
     this.fightlist = wowdata.fights;
@@ -318,6 +339,11 @@ wowcdapp.controller('userCtrl', function ($scope, $rootScope, wowdata, raiddata,
         console.log(index);
         if(index !== self.classid){
             this.specid = null;
+        }
+    }
+    this.specChange = function(raidIndex,specId){
+        if (self.raid.players[raidIndex].spec.id !== specId) {
+            self.raid.specChange(raidIndex, wowdata.getSpecById(specId));
         }
     }
     this.removePlayer = function(index){

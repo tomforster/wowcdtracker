@@ -12,7 +12,9 @@
                        value="{{$index}}"
                         ng-click="user.classChange($index)">
                 <img class="raidicon"
-                     ng-attr-src="img/classicons/{{wowclass.icon}}">
+                     ng-attr-src="img/classicons/{{wowclass.icon}}"
+                     title={{wowclass.name}}
+                     bs-tooltip>
                 </img>
             </label>
         </div>
@@ -24,27 +26,27 @@
                            class="btn btn-default"
                            value="{{$index}}">
                     <img class="raidicon"
-                         ng-attr-src="img/specicons/{{user.getSpecById(wowspec).wowicon}}">
+                         ng-attr-src="img/specicons/{{user.getSpecById(wowspec).wowicon}}"
+                         title={{user.getSpecById(wowspec).name}}
+                         bs-tooltip>
                     </img>
                 </label>
             </div>
         </div>
-        <button class="btn btn-default glyphicon glyphicon-plus" style="float: right" ng-click="user.addPlayer()"></button>
+        <button class="btn btn-default glyphicon glyphicon-plus" style="float: right" ng-click="user.addPlayer()" title="Add player" bs-tooltip></button>
     </div>
     <!-- current raid -->
     <h5>Raid List</h5>
     <div ng-repeat="player in user.raid.players track by $index" class="form-group panel panel-default" style="padding:4px; width:100%">
         <!-- player name -->
-        <input type="text" ng-model="player.name" class="form-control" style="height:30px" readonly>
+        <input type="text" ng-model="player.name" class="form-control" style="height:30px" >
         <!-- player class -->
-        <div class="btn-group" ng-model="player.class.name" bs-radio-group style="padding:0px 0px 0px 10px">
-            <label class="btn btn-default" ng-repeat="wowclass in user.classes" style="padding: 0px 0px">
-                <input type="radio"
-                       class="btn btn-default"
-                       value="{{wowclass.name}}"
-                       disabled>
+        <div class="btn-group" ng-model="player.class.name" style="padding:0px 0px 0px 10px">
+            <label class="btn btn-default" style="padding: 0px 0px">
                 <img class="raidicon"
-                     ng-attr-src="img/classicons/{{wowclass.icon}}">
+                     ng-attr-src="img/classicons/{{player.class.icon}}"
+                     title={{player.class.name}}
+                     bs-tooltip>
                 </img>
             </label>
             </button>
@@ -56,13 +58,15 @@
                     <input type="radio"
                            class="btn btn-default"
                            value="{{wowspec}}"
-                           disabled>
+                           ng-click="user.specChange($parent.$index,wowspec)">
                     <img class="raidicon"
-                         ng-attr-src="img/specicons/{{user.getSpecById(wowspec).wowicon}}">
+                         ng-attr-src="img/specicons/{{user.getSpecById(wowspec).wowicon}}"
+                         title={{user.getSpecById(wowspec).name}}
+                            bs-tooltip>
                     </img>
                 </label>
             </div>
         </div>
-        <button class="btn btn-default glyphicon glyphicon-minus" style="float: right" ng-click="user.removePlayer($index)"></button>
+        <button class="btn btn-default glyphicon glyphicon-minus" style="float: right" ng-click="user.removePlayer($index)" title="Remove player" bs-tooltip></button>
     </div>
 </div>

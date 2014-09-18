@@ -190,10 +190,8 @@ wowcdapp.controller('timelineCtrl', function($scope, $rootScope, $modal, $window
         myOtherModal.$promise.then(myOtherModal.show);
     }
 
-
     this.time = 0;
 
-    this.colorList = ["phase1","phase2","phase3","phase4","phase5","phase6","phase7","phase8"];
     this.update = function(){
         var numTicks = this.timelineData.fightLength/self.timelineView.tickLengthS;
 
@@ -209,6 +207,13 @@ wowcdapp.controller('timelineCtrl', function($scope, $rootScope, $modal, $window
         this.abilities = tracker.getDrawInfo('c');
     }
     this.update();
+
+    $scope.$watch(function(){
+        return $window.innerWidth;
+    }, function(value) {
+        console.log(value);
+    });
+
 });
 
 //region To Be Refactored
