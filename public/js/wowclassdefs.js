@@ -139,7 +139,6 @@ var TimelineData = function(phases,mainPhaseStr){
         return [pList,eList,ftime];
     }
     this.update = function(){
-        console.log("updating timelinedata");
         var time = 0;
         colorIndex = 0;
         var mainPhase = self.getPhaseByName(mainPhaseStr).generateSimplePhase(time);

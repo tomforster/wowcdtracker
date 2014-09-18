@@ -140,7 +140,6 @@ wowcdapp.service('raiddata',function(wowdata,localStorageService,$rootScope,$tim
         player.uid = uid++;
     }
     this.removePlayer = function(index){
-        console.log('blah');
         if((index >= 0) && (index < this.raidsize) && (index < this.players.length)){
             this.players.splice(index,1);
         }
