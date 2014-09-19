@@ -77,12 +77,15 @@ wowcdapp.directive('timelinenav', function(){
         }
     };
 });
-wowcdapp.controller('timelineCtrl', function($scope, $rootScope, $modal, $window, wowdata, raiddata, tracker){
+wowcdapp.controller('timelineCtrl', function($scope, $rootScope, $modal, $window, wowdata, raiddata, tracker, fightdata){
     $rootScope.loadingView = false;
+    console.log(fightdata.phases.length);
+    fightdata.update();
     var self = this;
     //Set up garrosh fight defaults todo: remove this
-    var phases = initGarroshHeroic();
-    this.timelineData = new TimelineData(phases,'Garrosh Heroic');
+    //var phases = initGarroshHeroic();
+    //this.timelineData = new TimelineData(fightdata.phases,'Garrosh Heroic');
+    this.timelineData = fightdata;
     //dimension data
     this.timelineView = {
         width:window.innerWidth-40,
@@ -130,7 +133,6 @@ wowcdapp.controller('timelineCtrl', function($scope, $rootScope, $modal, $window
         newTime = Math.min(newTime,self.timelineData.fightLength-self.timelineView.lengthS);
         newTime = Math.max(newTime,0);
         self.timelineView.x = self.timelineView.sToPx(newTime);
-        console.log(newTime);
         self.update();
         $scope.$apply();
     }
@@ -205,7 +207,6 @@ wowcdapp.controller('timelineCtrl', function($scope, $rootScope, $modal, $window
         this.phases = this.timelineData.getPhaseList();
         this.events = this.timelineData.getEventList();
         this.abilities = tracker.getDrawInfo('c');
-        console.log(self.timelineView.lengthS);
     }
     this.update();
 

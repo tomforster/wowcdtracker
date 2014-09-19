@@ -4,7 +4,7 @@
 
 var wowcdapp = angular.module('wowcdapp',['mgcrea.ngStrap','ui.router','LocalStorageModule','angular-loading-bar']);
 
-wowcdapp.factory('wowdataloader', function($http,$q,$state,$rootScope,wowdata){
+wowcdapp.factory('wowdataloader', function($http,$q,$state,$rootScope,wowdata,fightdata){
     return {
         getAbilities: function(){
             $rootScope.loadingView = true;
@@ -40,7 +40,14 @@ wowcdapp.factory('wowdataloader', function($http,$q,$state,$rootScope,wowdata){
             if (wowdata.fights.length > 0) return wowdata.fights;
             var promise = $http({method: 'GET',url:('/fights')}).success(function(data,status,headers,config) {
                 wowdata.fights = angular.fromJson(data);
-            });
+            })
+            return promise;
+        },
+        getPhases: function(){
+            if (fightdata.currentfight.name === undefined) return [];
+            var promise = $http({method: 'GET',url:('/phases'),params:{_id:fightdata.currentfight.phases}}).success(function(data,status,headers,config) {
+                fightdata.phases = angular.fromJson(data);
+            })
             return promise;
         }
     };
@@ -164,9 +171,6 @@ wowcdapp.service('raiddata',function(wowdata,localStorageService,$rootScope,$tim
         }
         return null;
     }
-
-
-
 });
 wowcdapp.service('tracker',function(wowdata,raiddata){
     var id = 0;
@@ -282,6 +286,89 @@ wowcdapp.service('tracker',function(wowdata,raiddata){
 wowcdapp.service('fightdata',function(){
     this.settingsState = -1;
     this.currentfight = {};
+    this.phases = [];
+    var self = this;
+    var phaseListFull = [];
+    var eventListFull = [];
+
+    var colors = colorSlicer.getColors(30,180);
+    var colorIndex = 0;
+
+    this.fightLength;
+
+    var generateSimplePhase = function(phase,time){
+        var dur = phase.duration;
+        var culledEventList = [];
+        //remove events that dont fit in duration
+        for(var i = 0; i < phase.events.length; i++){
+            if(phase.events[i].time <= dur){
+                culledEventList.push(phase.events[i]);
+            }
+        }
+        var newEventList = [];
+        for(var i = 0; i < culledEventList.length;i++){
+            var event = culledEventList[i];
+            //convert recurring to normal fight events
+            if(event.type === "r"){
+                for(var k = event.time; k <= dur; k += event.period){
+                    newEventList.push({name:event.name,time:k,duration:event.duration});
+                }
+            }else{
+                newEventList.push(event);
+            }
+        }
+        newEventList.sort(function(a, b){
+            return a.time-b.time
+        });
+        return {name:phase.name,time:time,duration:dur,events:newEventList,level:0,color:colors[colorIndex++]};
+    }
+
+    var recurse = function(phaseInfo,level){
+        var pList = [];
+        var eList = [];
+        var ptime = phaseInfo.time;
+        var ftime = phaseInfo.duration;
+        for (var i = 0; i < phaseInfo.events.length; i++){
+            var event = phaseInfo.events[i];
+            if(event.type === "s"){
+                var simplePhase = generateSimplePhase(self.getPhaseByName(event.name),ptime+event.time);
+                var lists = recurse(simplePhase,level+1);
+                ftime += lists[2];
+                ptime += lists[2];
+                simplePhase.duration = lists[2];
+                simplePhase.phaseLevel = level;
+                pList.push(simplePhase);
+                pList.push.apply(pList,lists[0]);
+                eList.push.apply(eList,lists[1]);
+            }else{
+                eList.push({name:event.name,time:ptime+event.time,duration:event.duration,phaseLevel:level});
+            }
+        }
+        return [pList,eList,ftime];
+    }
+    this.update = function(){
+        colorIndex = 0;
+        var time = 0;
+        var mainPhase = generateSimplePhase(self.getPhaseByName(self.currentfight.name+" "+self.currentfight.difficulty),time);
+        var lists = recurse(mainPhase,0);
+        phaseListFull = lists[0];
+        eventListFull = lists[1];
+        self.fightLength = lists[2];
+    }
+    this.getPhaseList = function(){
+        return phaseListFull;
+    }
+    this.getEventList = function(){
+        return eventListFull;
+    }
+    this.getPhaseByName = function(name){
+        for(var i = 0; i < self.phases.length; i++){
+            if(self.phases[i].name === name){
+                return self.phases[i];
+            }
+        }
+        return null;
+    }
 })
 //setup views
 wowcdapp.config(function($stateProvider, $urlRouterProvider){
@@ -309,7 +396,12 @@ wowcdapp.config(function($stateProvider, $urlRouterProvider){
         .state('timeline', {
             url: "/timeline",
             controller: 'timelineCtrl as timeline',
-            templateUrl: "partials/timelineview.html"
+            templateUrl: "partials/timelineview.html",
+            resolve: {
+                phases: function(wowdataloader){
+                    return wowdataloader.getPhases();
+                }
+            }
         })
         .state('export', {
             url: "/export",
