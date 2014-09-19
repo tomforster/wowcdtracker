@@ -332,7 +332,9 @@ wowcdapp.controller('userCtrl', function ($scope, $rootScope, $window, wowdata, 
     this.specid = null;
     this.name = "";
     this.addPlayer = function(){
-        self.raid.addPlayer(self.name,wowdata.classes[self.classid], wowdata.getSpecById(wowdata.classes[self.classid].specs[self.specid]));
+        if((this.classid !== null) && (this.specid !== null)) {
+            self.raid.addPlayer(self.name, wowdata.classes[self.classid], wowdata.getSpecById(wowdata.classes[self.classid].specs[self.specid]));
+        }
     };
     this.classChange = function(index){
         console.log(index);
