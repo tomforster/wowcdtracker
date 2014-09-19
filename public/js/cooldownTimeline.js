@@ -85,10 +85,10 @@ wowcdapp.controller('timelineCtrl', function($scope, $rootScope, $modal, $window
     this.timelineData = new TimelineData(phases,'Garrosh Heroic');
     //dimension data
     this.timelineView = {
-        width:1024,
+        width:window.innerWidth-40,
         height:500,
         startS:0,
-        lengthS:4*60,
+        lengthS:(5*60/1024)*(window.innerWidth-40),
         x:0,
         axisPositionPx:13,
         labelPositionPx:11,
@@ -105,7 +105,7 @@ wowcdapp.controller('timelineCtrl', function($scope, $rootScope, $modal, $window
     this.timelineNavView = {
         navx:0,
         gnavx:0,
-        width:1024,
+        width:window.innerWidth-40,
         height:30,
         axisPositionPx:15,
         phaseLabelHeightPx: 4,
@@ -205,12 +205,17 @@ wowcdapp.controller('timelineCtrl', function($scope, $rootScope, $modal, $window
         this.phases = this.timelineData.getPhaseList();
         this.events = this.timelineData.getEventList();
         this.abilities = tracker.getDrawInfo('c');
+        console.log(self.timelineView.lengthS);
     }
     this.update();
 
-    //window.onresize = function(event) {
-    //    console.log($window.innerWidth);
-    //};
+    window.onresize = function(event) {
+        self.timelineView.width = window.innerWidth-40;
+        self.timelineNavView.width = window.innerWidth-40;
+        self.timelineView.lengthS = 5*60/1024*self.timelineView.width;
+        self.update();
+        $scope.$apply();
+    };
 });
 
 //region To Be Refactored
