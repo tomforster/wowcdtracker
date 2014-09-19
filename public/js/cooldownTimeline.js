@@ -208,12 +208,9 @@ wowcdapp.controller('timelineCtrl', function($scope, $rootScope, $modal, $window
     }
     this.update();
 
-    $scope.$watch(function(){
-        return $window.innerWidth;
-    }, function(value) {
-        console.log(value);
-    });
-
+    //window.onresize = function(event) {
+    //    console.log($window.innerWidth);
+    //};
 });
 
 //region To Be Refactored
