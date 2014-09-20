@@ -109,5 +109,5 @@ input[type=radio]:not(:checked) + img {
   -moz-filter: grayscale(0%) !important;
   filter: grayscale(0%) !important;
   filter: gray; filter: grayscale(0%) !important;
-  filter: url("") !important;
+  filter: none !important;
 }

@@ -94,6 +94,6 @@ input[type=radio]:not(:checked) + img {
   filter: grayscale(0%) !important;
   filter: gray;
   filter: grayscale(0%) !important;
-  filter: url("") !important; }
+  filter: none !important; }
 
 /*# sourceMappingURL=wow.css.map */
