@@ -96,7 +96,7 @@ $imgsize: 30px;
   margin-left: 1px;
 }
 
-input:checked + img{
-  outline:3px solid rgba(0, 0, 0, 0.80);
-  outline-offset:-2px;
+input[type=radio]:checked + img{
+  outline:15px solid rgba(255, 92, 0, 0.50);
+  outline-offset:-15px;
 }

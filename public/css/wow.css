@@ -80,8 +80,8 @@
   margin-right: 1px;
   margin-left: 1px; }
 
-input:checked + img {
-  outline: 3px solid rgba(0, 0, 0, 0.8);
-  outline-offset: -2px; }
+input[type=radio]:checked + img {
+  outline: 15px solid rgba(255, 92, 0, 0.5);
+  outline-offset: -15px; }
 
 /*# sourceMappingURL=wow.css.map */
