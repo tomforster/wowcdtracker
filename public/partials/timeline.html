@@ -79,6 +79,8 @@
                           ng-attr-rx={{timeline.timelineView.corner}}
                           ng-attr-ry={{timeline.timelineView.corner}}
                           pointer-events="none"></rect>
+                </g>
+                <g ng-repeat="abilityEntry in player.abilityArray">
                     <path  ng-show="timeline.focus == abilityEntry.cid"
                            ng-attr-d="M {{timeline.timelineView.sToPx(abilityEntry.time)-5}}
                       {{timeline.timelineView.axisPositionPx+timeline.timelineView.levelheightPx*$parent.$index+timeline.timelineView.gapsize*($parent.$index+1)}}
@@ -122,5 +124,6 @@
                 </g>
             </g>
         </g>
+
     </g>
 </svg>

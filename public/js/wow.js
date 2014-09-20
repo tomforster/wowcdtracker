@@ -85,7 +85,7 @@ wowcdapp.factory('wowdata', function(){
         }
     }
 });
-wowcdapp.service('raiddata',function(wowdata,localStorageService,$rootScope,$timeout){
+wowcdapp.service('raiddata',function(wowdata,localStorageService){
     var self = this;
     this.players = [];
     this.raidsize = 20;
@@ -138,6 +138,18 @@ wowcdapp.service('raiddata',function(wowdata,localStorageService,$rootScope,$tim
             var nameArray = player.name.split(" ");
             if(nameArray.length === 3){
                 if((nameArray[0] === player.spec.name) && (nameArray[1] === player.class.name) && (!isNaN(nameArray[2]))){
+                    player.spec = spec;
+                    player.name = generateName(player.class,player.spec)
+                }
+            }
+            if(nameArray.length === 4){
+                //fix for bm hunter
+                if((nameArray[0] + " " + nameArray[1] === player.spec.name) && (nameArray[2] === player.class.name) && (!isNaN(nameArray[3]))){
+                    player.spec = spec;
+                    player.name = generateName(player.class,player.spec)
+                }
+                //fix for dk
+                if((nameArray[0] === player.spec.name) && (nameArray[1]+ " " + nameArray[2] === player.class.name) && (!isNaN(nameArray[3]))){
                     player.spec = spec;
                     player.name = generateName(player.class,player.spec)
                 }
@@ -284,7 +296,7 @@ wowcdapp.service('tracker',function(wowdata,raiddata){
     }
 });
 wowcdapp.service('fightdata',function(){
-    this.settingsState = -1;
+    this.settingsState = 0;
     this.currentfight = {};
     this.phases = [];
     var self = this;
@@ -347,6 +359,11 @@ wowcdapp.service('fightdata',function(){
         return [pList,eList,ftime];
     }
     this.update = function(){
+        if (self.currentfight.name !== undefined) {
+            self.settingsState = 1;
+        }else{
+            return;
+        }
         colorIndex = 0;
         var time = 0;
         var mainPhase = generateSimplePhase(self.getPhaseByName(self.currentfight.name+" "+self.currentfight.difficulty),time);
@@ -451,32 +468,6 @@ wowcdapp.controller('userCtrl', function ($scope, $rootScope, $window, wowdata, 
         self.raid.saveRaid();
     },true);
 });
-/*wowcdapp.directive('classlist', function(wowdata){
-    return {
-        restrict: 'E',
-        templateUrl: 'partials/class_select.html',
-        controllerAs: 'classCtrl',
-        controller: function(){
-            this.classShowHideArr = new Array(wowdata.classes.length);
-
-            for(var i = 0; i < this.classShowHideArr.length;i++){
-                this.classShowHideArr[i] = true;
-            }
-            this.showSpecEvent = function(cla){
-                for(var i = 0; i < this.classShowHideArr.length;i++){
-                    if( i === cla){
-                        this.classShowHideArr[cla] = !this.classShowHideArr[cla];
-                        continue;
-                    }
-                    this.classShowHideArr[i] = true;
-                }
-            }
-            this.incEvent = function(cla,spec){
-                //this.raid.addPlayer(cla,spec);
-            }
-        }
-    }
-});*/
 wowcdapp.directive('raidlist',function(){
     return {
         restrict: 'E',

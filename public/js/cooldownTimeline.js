@@ -78,137 +78,138 @@ wowcdapp.directive('timelinenav', function(){
     };
 });
 wowcdapp.controller('timelineCtrl', function($scope, $rootScope, $modal, $window, wowdata, raiddata, tracker, fightdata){
-    $rootScope.loadingView = false;
-    console.log(fightdata.phases.length);
-    fightdata.update();
     var self = this;
-    //Set up garrosh fight defaults todo: remove this
-    //var phases = initGarroshHeroic();
-    //this.timelineData = new TimelineData(fightdata.phases,'Garrosh Heroic');
-    this.timelineData = fightdata;
-    //dimension data
-    this.timelineView = {
-        width:window.innerWidth-40,
-        height:500,
-        startS:0,
-        lengthS:(5*60/1024)*(window.innerWidth-40),
-        x:0,
-        axisPositionPx:13,
-        labelPositionPx:11,
-        tickLengthS:30,
-        levelheightPx:22,
-        gapsize:5,
-        corner:5,
-        phaseLabelHeightPx: 7,
-        phaseLabelTextSize: 14,
-        widthNamesAreaPx: 24,
-        sToPx:function(s){return s*(self.timelineView.width/(self.timelineView.lengthS));},
-        pxToS:function(px){return px*(self.timelineView.lengthS/self.timelineView.width)}
-    };
-    this.timelineNavView = {
-        navx:0,
-        gnavx:0,
-        width:window.innerWidth-40,
-        height:30,
-        axisPositionPx:15,
-        phaseLabelHeightPx: 4,
-        sToPx:function(s){return s*(self.timelineNavView.width/(self.timelineData.fightLength));},
-        pxToS:function(px){return px*(self.timelineData.fightLength/self.timelineNavView.width);}
-    };
-    //cull orphans from tracker
-    tracker.cullRemoved();
+    $rootScope.loadingView = false;
+    this.fightname = "No fight loaded";
+    fightdata.update();
+    this.settingsState = fightdata.settingsState;
+    if (this.settingsState) {
+        this.fightname = fightdata.currentfight.name + " " + fightdata.currentfight.difficulty;
+        this.timelineData = fightdata;
+        //dimension data
+        this.timelineView = {
+            width:window.innerWidth-40,
+            height:500,
+            startS:0,
+            lengthS:(5*60/1024)*(window.innerWidth-40),
+            x:0,
+            axisPositionPx:13,
+            labelPositionPx:11,
+            tickLengthS:30,
+            levelheightPx:22,
+            gapsize:5,
+            corner:5,
+            phaseLabelHeightPx: 7,
+            phaseLabelTextSize: 14,
+            widthNamesAreaPx: 24,
+            sToPx:function(s){return s*(self.timelineView.width/(self.timelineView.lengthS));},
+            pxToS:function(px){return px*(self.timelineView.lengthS/self.timelineView.width)}
+        };
+        this.timelineNavView = {
+            navx:0,
+            gnavx:0,
+            width:window.innerWidth-40,
+            height:30,
+            axisPositionPx:15,
+            phaseLabelHeightPx: 4,
+            sToPx:function(s){return s*(self.timelineNavView.width/(self.timelineData.fightLength));},
+            pxToS:function(px){return px*(self.timelineData.fightLength/self.timelineNavView.width);}
+        };
+        //cull orphans from tracker
+        tracker.cullRemoved();
 
-    $scope.drag = false;
-    $scope.$on('drag',function(event,handle,dx,dy){
-        tracker.editAbility(handle,self.timelineView.pxToS(dx),0);
-        $scope.drag = true;
-        $scope.$apply();
-    });
-    $scope.$on('undrag',function(){
-        //console.log('undrag');
         $scope.drag = false;
-    });
-    $scope.setWindow = function(offsetX){
-        var newTime = self.timelineNavView.pxToS(offsetX)-self.timelineView.lengthS/2;
-        newTime = Math.min(newTime,self.timelineData.fightLength-self.timelineView.lengthS);
-        newTime = Math.max(newTime,0);
-        self.timelineView.x = self.timelineView.sToPx(newTime);
-        self.update();
-        $scope.$apply();
-    }
-    $scope.setGhost = function(offsetX){
-        var newTime = self.timelineNavView.pxToS(offsetX)-self.timelineView.lengthS/2;
-        newTime = Math.min(newTime,self.timelineData.fightLength-self.timelineView.lengthS);
-        newTime = Math.max(newTime,0);
-        self.timelineNavView.gnavx = self.timelineNavView.sToPx(newTime);
-        $scope.$apply();
-    }
-    $scope.setFocus = function(cid){
-        self.focus = cid;
-        $scope.$apply();
-    }
-
-    this.focus = -1;
-    var myOtherModal = $modal({scope: $scope, template: 'partials/modalcds.html', show: false});
-    this.modalAbilities = [];
-    $scope.selectCooldown = function(player,ability){
-        if(!ability.isready)
-            return
-        tracker.addAbility(player.uid,ability.ability,self.time);
-        myOtherModal.hide();
-        self.update();
-    }
-    $scope.open = function(time) {
-        //console.log("opening ability pane")
-        if($scope.drag){
-            //console.log("cancel due to drag")
-            return;
+        $scope.$on('drag',function(event,handle,dx,dy){
+            tracker.editAbility(handle,self.timelineView.pxToS(dx),0);
+            $scope.drag = true;
+            $scope.$apply();
+        });
+        $scope.$on('undrag',function(){
+            $scope.drag = false;
+        });
+        $scope.setWindow = function(offsetX){
+            var newTime = self.timelineNavView.pxToS(offsetX)-self.timelineView.lengthS/2;
+            newTime = Math.min(newTime,self.timelineData.fightLength-self.timelineView.lengthS);
+            newTime = Math.max(newTime,0);
+            self.timelineView.x = self.timelineView.sToPx(newTime);
+            self.update();
+            $scope.$apply();
         }
-        self.modalAbilities = [];
-        var playerAbilities = {};
-        self.time = self.timelineView.pxToS(time+self.timelineView.x-self.timelineView.widthNamesAreaPx);
-        var raidAbilities = raiddata.getAbilities();
-        var availableAbilities = tracker.getAvailableAbilities(self.time);
-        var lastUID = -1;
-        for(var i = 0; i < raidAbilities.length;i++){
-            if(lastUID === -1){
-                playerAbilities = {};
-                playerAbilities.abilities = [];
-                playerAbilities.player = raiddata.getPlayerByUID(raidAbilities[i].uid);
+        $scope.setGhost = function(offsetX){
+            var newTime = self.timelineNavView.pxToS(offsetX)-self.timelineView.lengthS/2;
+            newTime = Math.min(newTime,self.timelineData.fightLength-self.timelineView.lengthS);
+            newTime = Math.max(newTime,0);
+            self.timelineNavView.gnavx = self.timelineNavView.sToPx(newTime);
+            $scope.$apply();
+        }
+        $scope.setFocus = function(cid){
+            self.focus = cid;
+            $scope.$apply();
+        }
+
+        this.focus = -1;
+        var myOtherModal = $modal({scope: $scope, template: 'partials/modalcds.html', show: false});
+        this.modalAbilities = [];
+        $scope.selectCooldown = function(player,ability){
+            if(!ability.isready)
+                return
+            tracker.addAbility(player.uid,ability.ability,self.time);
+            myOtherModal.hide();
+            self.update();
+        }
+        $scope.open = function(time) {
+            //console.log("opening ability pane")
+            if($scope.drag){
+                //console.log("cancel due to drag")
+                return;
             }
-            else if(raidAbilities[i].uid != lastUID){
-                self.modalAbilities.push(playerAbilities);
-                playerAbilities = {};
-                playerAbilities.abilities = [];
-                playerAbilities.player = raiddata.getPlayerByUID(raidAbilities[i].uid);
+            self.modalAbilities = [];
+            var playerAbilities = {};
+            self.time = self.timelineView.pxToS(time+self.timelineView.x-self.timelineView.widthNamesAreaPx);
+            var raidAbilities = raiddata.getAbilities();
+            var availableAbilities = tracker.getAvailableAbilities(self.time);
+            var lastUID = -1;
+            for(var i = 0; i < raidAbilities.length;i++){
+                if(lastUID === -1){
+                    playerAbilities = {};
+                    playerAbilities.abilities = [];
+                    playerAbilities.player = raiddata.getPlayerByUID(raidAbilities[i].uid);
+                }
+                else if(raidAbilities[i].uid != lastUID){
+                    self.modalAbilities.push(playerAbilities);
+                    playerAbilities = {};
+                    playerAbilities.abilities = [];
+                    playerAbilities.player = raiddata.getPlayerByUID(raidAbilities[i].uid);
+                }
+                playerAbilities.abilities.push({
+                    ability:raidAbilities[i].ability,
+                    isready:availableAbilities[i]
+                });
+                lastUID = raidAbilities[i].uid;
             }
-            playerAbilities.abilities.push({
-                ability:raidAbilities[i].ability,
-                isready:availableAbilities[i]
-            });
-            lastUID = raidAbilities[i].uid;
+            self.modalAbilities.push(playerAbilities);
+            myOtherModal.$promise.then(myOtherModal.show);
         }
-        self.modalAbilities.push(playerAbilities);
-        myOtherModal.$promise.then(myOtherModal.show);
-    }
 
-    this.time = 0;
+        this.time = 0;
 
-    this.update = function(){
-        var numTicks = this.timelineData.fightLength/self.timelineView.tickLengthS;
+        this.update = function(){
+            var numTicks = this.timelineData.fightLength/self.timelineView.tickLengthS;
 
-        this.tickLengthPx = self.timelineView.sToPx(self.timelineView.tickLengthS);
-        self.ticks = [];
-        var time = new Date(0,0,0,0,0,0);
-        for(var i = 0; i < numTicks; i++){
-            self.ticks.push(time.getMinutes()+":"+(time.getSeconds()+ "0").slice(0,2));
-            time.setTime(time.getTime()+1000*self.timelineView.tickLengthS);
+            this.tickLengthPx = self.timelineView.sToPx(self.timelineView.tickLengthS);
+            self.ticks = [];
+            var time = new Date(0,0,0,0,0,0);
+            for(var i = 0; i < numTicks; i++){
+                self.ticks.push(time.getMinutes()+":"+(time.getSeconds()+ "0").slice(0,2));
+                time.setTime(time.getTime()+1000*self.timelineView.tickLengthS);
+            }
+            this.phases = this.timelineData.getPhaseList();
+            this.events = this.timelineData.getEventList();
+            this.abilities = tracker.getDrawInfo('c');
         }
-        this.phases = this.timelineData.getPhaseList();
-        this.events = this.timelineData.getEventList();
-        this.abilities = tracker.getDrawInfo('c');
+        this.update();
     }
-    this.update();
+    
 
     window.onresize = function(event) {
         self.timelineView.width = window.innerWidth-40;

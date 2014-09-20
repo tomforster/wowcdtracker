@@ -41,34 +41,4 @@
     .modal-backdrop.am-fade.ng-leave.ng-leave-active {
       opacity: 0; }
 
-/*.phase{
-  stroke: rgba(0, 0, 0, 0.50);
-  stroke-width:1px
-}
-
-.phase1{
-  @extend .phase;
-  fill: hsla(170, 50%, 10%, 0.90);
-
-}
-.phase2{
-  @extend .phase;
-  fill: hsla(305, 50%, 10%, 0.90)
-}
-.phase3{@extend .phase;
-  fill: hsla(20, 50%, 10%, 0.90)
-}
-.phase4{@extend .phase;
-  fill: hsla(210, 50%, 10%, 0.90)
-}
-.phase5{@extend .phase;
-  fill: hsla(71, 50%, 10%, 0.90)
-}
-.phase6{@extend .phase;
-  fill: hsla(0, 50%, 10%, 0.90)
-}
-.phase7{@extend .phase;
-  fill: hsla(206, 50%, 10%, 0.90)
-}*/
-
 /*# sourceMappingURL=timeline.css.map */

@@ -65,22 +65,14 @@
   background: rgba(255, 0, 0, 0.51); }
 
 .modal {
-  background: #CCC;
+  background: rgba(204, 204, 204, 0.51);
   height: 100%;
-  opacity: .75;
+  opacity: 1;
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   z-index: 999; }
-
-.sprite {
-  width: 50px;
-  height: 50px; }
-
-.spritesm {
-  width: 18px;
-  height: 18px; }
 
 .raidicon {
   width: 30px;
@@ -89,7 +81,7 @@
   margin-left: 1px; }
 
 input:checked + img {
-  outline: 2px solid red;
+  outline: 3px solid rgba(0, 0, 0, 0.8);
   outline-offset: -2px; }
 
 /*# sourceMappingURL=wow.css.map */

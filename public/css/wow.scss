@@ -79,26 +79,12 @@
 }
 
 .modal {
-  background: #CCC;
+  background: rgba(204, 204, 204, 0.51);
   height: 100%;
-  opacity: .75;
+  opacity: 1;
   position: absolute; top: 0; left: 0;
   width: 100%;
   z-index: 999;
-}
-
-$imgsize: 50px;
-
-.sprite {
-  width: $imgsize;
-  height: $imgsize;
-}
-
-$imgsize: 18px;
-
-.spritesm {
-  width: $imgsize;
-  height: $imgsize;
 }
 
 $imgsize: 30px;
@@ -111,6 +97,6 @@ $imgsize: 30px;
 }
 
 input:checked + img{
-  outline:2px solid red;
+  outline:3px solid rgba(0, 0, 0, 0.80);
   outline-offset:-2px;
 }
