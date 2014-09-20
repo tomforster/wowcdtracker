@@ -12,6 +12,7 @@
                        value="{{$index}}"
                         ng-click="user.classChange($index)">
                 <img class="raidicon"
+                     ng-class="(user.classid === null) ? 'nofilter' : ''"
                      ng-attr-src="img/classicons/{{wowclass.icon}}"
                      title={{wowclass.name}}
                      bs-tooltip>

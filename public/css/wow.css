@@ -88,4 +88,12 @@ input[type=radio]:not(:checked) + img {
   filter: grayscale(100%);
   filter: url(desaturate.svg#greyscale); }
 
+.nofilter {
+  -webkit-filter: grayscale(0%) !important;
+  -moz-filter: grayscale(0%) !important;
+  filter: grayscale(0%) !important;
+  filter: gray;
+  filter: grayscale(0%) !important;
+  filter: url("") !important; }
+
 /*# sourceMappingURL=wow.css.map */
