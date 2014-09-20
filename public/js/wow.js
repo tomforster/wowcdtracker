@@ -213,7 +213,7 @@ wowcdapp.service('tracker',function(wowdata,raiddata){
     }
     this.addAbility = function(pid,cd,time){
         var cid = getAbilityID();
-        abilityEntries[cid] ={pid:pid,cid:cid,ability:cd,time:time};
+        abilityEntries.push({pid:pid,cid:cid,ability:cd,time:time});
     }
     this.editAbility = function(handle,dx,dy){
         //check is this a valid position
@@ -240,7 +240,7 @@ wowcdapp.service('tracker',function(wowdata,raiddata){
         }
     }
 
-    var isLevelAvailable = function(level,time,duration){
+    /*var isLevelAvailable = function(level,time,duration){
         //is there a free spot on this level?
         var abilityLevel = level;
         for(var i = 0; i < abilityLevel.length; i++){
@@ -254,41 +254,32 @@ wowcdapp.service('tracker',function(wowdata,raiddata){
             }
         }
         return true;
-    }
+    }*/
     var populateLevels = function(sortType){
         var timelineLevels = {};
-        abilityEntries.sort(function(a,b){return b.ability.duration - a.ability.duration});
-        max_level = 7;
+        //abilityEntries.sort(function(a,b){return b.ability.duration - a.ability.duration});
+        abilityEntries.sort(function (a, b) {return a.cid - b.cid});
         if(sortType === 'c'){
-            abilityEntries.sort(function(a,b){return b.pid - a.pid});
-            abilityEntries.forEach(function(abilityEntry,cid){
-                timelineLevels[abilityEntry.pid] = {
-                    uid:abilityEntry.pid,
+            abilityEntries.sort(function(a,b){return a.pid - b.pid});
+            for(var i = 0; i < abilityEntries.length; i++){
+                var abilityEntry = abilityEntries[i];
+                timelineLevels[abilityEntry.pid]= {uid:abilityEntry.pid,
                     name:raiddata.getPlayerByUID(abilityEntry.pid).name,
                     icon:raiddata.getPlayerByUID(abilityEntry.pid).spec.wowicon,
-                    abilityArray:[]
+                    abilityArray:{}
                 };
-            });
-            abilityEntries.forEach(function(abilityEntry,cid){
-                timelineLevels[abilityEntry.pid].abilityArray.push(abilityEntry);
-            });
-            var index = 0;
-            for(var key in timelineLevels){
-                timelineLevels[key].level = index++;
-            };
-        }else{
-            for(var i = 0; i < max_level; i++){
-                timelineLevels.push([]);
             }
-            abilityEntries.forEach(function(abilityEntry,cid){
-                var level = 0;
-                while(level < max_level){
-                    if(isLevelAvailable(timelineLevels[level],abilityEntry.time,abilityEntry.ability.duration)){
-                        timelineLevels[level].push(cid);
-                        break;
-                    }
-                    level++;
-                }
+            abilityEntries.forEach(function(abilityEntry,ind){
+                timelineLevels[abilityEntry.pid].abilityArray[abilityEntry.cid]=abilityEntry;
+            });
+            level = 0;
+            for(entry in timelineLevels){
+                timelineLevels[entry].level = level++;
+            }
+            //timelineLevels.sort(function(a,b){return a.pid - b.pid});
+        }else if(sortType === 'a') {
+            abilityEntries.forEach(function(abilityEntry,ind){
+                timelineLevels[abilityEntry.cid]=abilityEntry;
             });
         }
         return timelineLevels;
@@ -332,8 +323,9 @@ wowcdapp.service('fightdata',function(){
             var event = culledEventList[i];
             //convert recurring to normal fight events
             if(event.type === "r"){
+                var index = 1;
                 for(var k = event.time; k <= dur; k += event.period){
-                    newEventList.push({name:event.name,time:k,duration:event.duration});
+                    newEventList.push({name:event.name,time:k,duration:event.duration,count:index++});
                 }
             }else{
                 newEventList.push(event);
@@ -363,7 +355,7 @@ wowcdapp.service('fightdata',function(){
                 pList.push.apply(pList,lists[0]);
                 eList.push.apply(eList,lists[1]);
             }else{
-                eList.push({name:event.name,time:ptime+event.time,duration:event.duration,phaseLevel:level});
+                eList.push({name:event.name,time:ptime+event.time,duration:event.duration,phaseLevel:level,phaseName:phaseInfo.name,count:event.count});
             }
         }
         return [pList,eList,ftime];
@@ -432,7 +424,8 @@ wowcdapp.config(function($stateProvider, $urlRouterProvider){
         })
         .state('export', {
             url: "/export",
-            templateUrl: "partials/exportview.html"
+            templateUrl: "partials/exportview.html",
+            controller: 'exportCtrl as export'
         })
 });
 wowcdapp.run(['$rootScope', function($root) {
@@ -484,3 +477,49 @@ wowcdapp.directive('raidlist',function(){
         templateUrl: 'partials/raid_display.html'
     }
 });
+wowcdapp.controller('exportCtrl', function($scope,wowdata,raiddata,fightdata,tracker){
+    //todo: add phase starts
+    var events = fightdata.getEventList();
+    var abilities = tracker.getDrawInfo('a');
+    var minEvents = {};
+    //for each ability
+    for(key in abilities){
+        //find nearest fight event + distance
+        var minEvent = null;
+        var minDist = 99999;
+        var ability = abilities[key];
+        for(var i = 0; i < events.length;i++){
+            var event = events[i];
+            var dist = event.time - ability.time;
+            if((dist > 0) && (dist < minDist)){
+                minDist = dist;
+                minEvent = event;
+            }
+            //find overlaps
+            var abDur = ability.ability.duration;
+            //start of ability within event
+            if((ability.time > event.time)&&(ability.time < event.time+event.duration)){
+                console.log(event.name +" "+ event.count);
+            }
+            //end of ability within event
+            else if((ability.time+abDur > event.time)&&(ability.time+abDur < event.time+event.duration)){
+                console.log(event.name +" "+ event.count);
+            }
+            //start of event within ability
+            else if((ability.time < event.time)&&(ability.time+abDur > event.time)){
+                console.log(event.name +" "+ event.count);
+            }
+            //end of event within ability
+            else if((ability.time < event.time+event.duration)&&(ability.time+abDur > event.time+event.duration)){
+                console.log(event.name +" "+ event.count);
+            }
+
+        }
+        minEvents[key] = {player:raiddata.getPlayerByUID(ability.pid),ability:ability.ability,event:minEvent, dist:minDist};
+    }
+    for(key in minEvents) {
+        console.log(minEvents[key].player.name + "'s " + minEvents[key].ability.name + " used on " + minEvents[key].event.name +" "+minEvents[key].event.count);
+    }
+
+    //write to box
+})

@@ -35,7 +35,6 @@ wowcdapp.directive('draggable', function($document){
                 scope.setFocus(attrs.handle);
                 event.preventDefault();
                 event.stopPropagation();
-                console.log('mousedown draggable on '+attrs.handle);
                 start.x = event.offsetX;
                 start.y = event.offsetY;
                 //setfocus, or toggle
@@ -145,21 +144,17 @@ wowcdapp.controller('timelineCtrl', function($scope, $rootScope, $modal, $window
         $scope.setFocus = function(cid){
             if(self.focus === cid){
                 if(self.doubleclicked){
-                    console.log("dcdetected");
                     //delete it
                     tracker.removeAbility(self.focus);
                     self.update();
                     self.doubleclicked = false;
-                    console.log("dcfalse");
                 }
                 self.focus = -1;
             }else{
                 self.focus = cid;
                 self.doubleclicked = true;
-                console.log("dctrue");
                 $timeout(function(){
                     self.doubleclicked = false;
-                    console.log("dcfalse");
                 },250);
             }
             $scope.$apply();
