@@ -226,8 +226,18 @@ wowcdapp.service('tracker',function(wowdata,raiddata){
             }
         }
     }
+    this.removeAbility = function(cid){
+        abilityEntries.splice(getAbilityEntryIndex(cid),1);
+    }
     var getAbilityID = function(){
         return id++;
+    }
+    var getAbilityEntryIndex = function(cid){
+        for(var i = 0; i < abilityEntries.length; i++){
+            if (abilityEntries[i].cid === parseInt(cid)){
+                return i;
+            }
+        }
     }
 
     var isLevelAvailable = function(level,time,duration){
@@ -289,7 +299,7 @@ wowcdapp.service('tracker',function(wowdata,raiddata){
     this.cullRemoved = function(){
         abilityEntries.forEach(function(abilityEntry,cid){
             if(raiddata.getPlayerByUID(abilityEntry.pid) === null){
-                abilityEntries.splice(cid,1);
+                abilityEntries.splice(getAbilityEntryIndex(cid),1);
                 console.log("removed orphan ability data");
             }
         });

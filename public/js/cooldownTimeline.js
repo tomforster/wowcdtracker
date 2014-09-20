@@ -77,7 +77,7 @@ wowcdapp.directive('timelinenav', function(){
         }
     };
 });
-wowcdapp.controller('timelineCtrl', function($scope, $rootScope, $modal, $window, wowdata, raiddata, tracker, fightdata){
+wowcdapp.controller('timelineCtrl', function($scope, $rootScope, $modal, $window, $timeout, wowdata, raiddata, tracker, fightdata){
     var self = this;
     $rootScope.loadingView = false;
     this.fightname = "No fight loaded";
@@ -143,11 +143,30 @@ wowcdapp.controller('timelineCtrl', function($scope, $rootScope, $modal, $window
             $scope.$apply();
         }
         $scope.setFocus = function(cid){
-            self.focus = cid;
+            if(self.focus === cid){
+                if(self.doubleclicked){
+                    console.log("dcdetected");
+                    //delete it
+                    tracker.removeAbility(self.focus);
+                    self.update();
+                    self.doubleclicked = false;
+                    console.log("dcfalse");
+                }
+                self.focus = -1;
+            }else{
+                self.focus = cid;
+                self.doubleclicked = true;
+                console.log("dctrue");
+                $timeout(function(){
+                    self.doubleclicked = false;
+                    console.log("dcfalse");
+                },250);
+            }
             $scope.$apply();
         }
 
         this.focus = -1;
+        this.doubleclicked = false;
         var myOtherModal = $modal({scope: $scope, template: 'partials/modalcds.html', show: false});
         this.modalAbilities = [];
         $scope.selectCooldown = function(player,ability){
