@@ -96,7 +96,10 @@ $imgsize: 30px;
   margin-left: 1px;
 }
 
-input[type=radio]:not(:checked) + img{
-  outline:15px solid rgba(0, 0, 0, 0.23);
-  outline-offset:-15px;
+input[type=radio]:not(:checked) + img {
+  -webkit-filter: grayscale(100%);
+  -moz-filter: grayscale(100%);
+  filter: grayscale(100%);
+  filter: gray; filter: grayscale(100%);
+  filter: url(desaturate.svg#greyscale);
 }
