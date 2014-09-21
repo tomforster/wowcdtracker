@@ -479,46 +479,74 @@ wowcdapp.directive('raidlist',function(){
 });
 wowcdapp.controller('exportCtrl', function($scope,wowdata,raiddata,fightdata,tracker){
     //todo: add phase starts
+    var phases = fightdata.getPhaseList();
     var events = fightdata.getEventList();
     var abilities = tracker.getDrawInfo('a');
-    var minEvents = {};
+    var processed = {};
     //for each ability
     for(key in abilities){
         //find nearest fight event + distance
-        var minEvent = null;
-        var minDist = 99999;
-        var ability = abilities[key];
+        var minEvents = {};
+        var minDist = 15;
+        var ability = abilities[key].ability;
+        var aDur = ability.duration;
+        var aTime = abilities[key].time;
+        minEvents.player = raiddata.getPlayerByUID(abilities[key].pid);
+        minEvents.ability = ability;
+        minEvents.eventList = [];
         for(var i = 0; i < events.length;i++){
             var event = events[i];
-            var dist = event.time - ability.time;
-            if((dist > 0) && (dist < minDist)){
-                minDist = dist;
-                minEvent = event;
-            }
-            //find overlaps
-            var abDur = ability.ability.duration;
             //start of ability within event
-            if((ability.time > event.time)&&(ability.time < event.time+event.duration)){
-                console.log(event.name +" "+ event.count);
+            if((aTime > event.time)&&(aTime < event.time+event.duration)){
+                //console.log(event.name +" "+ event.count);
+                minEvents.eventList.push({event:event, dist:0});
             }
             //end of ability within event
-            else if((ability.time+abDur > event.time)&&(ability.time+abDur < event.time+event.duration)){
-                console.log(event.name +" "+ event.count);
+            else if((aTime+aDur > event.time)&&(aTime+aDur < event.time+event.duration)){
+                //console.log(event.name +" "+ event.count);
+                minEvents.eventList.push({event:event, dist:0});
             }
             //start of event within ability
-            else if((ability.time < event.time)&&(ability.time+abDur > event.time)){
-                console.log(event.name +" "+ event.count);
+            else if((aTime < event.time)&&(aTime+aDur > event.time)){
+                //console.log(event.name +" "+ event.count);
+                minEvents.eventList.push({event:event, dist:0});
             }
             //end of event within ability
-            else if((ability.time < event.time+event.duration)&&(ability.time+abDur > event.time+event.duration)){
-                console.log(event.name +" "+ event.count);
+            else if((aTime < event.time+event.duration)&&(aTime+aDur > event.time+event.duration)){
+                //console.log(event.name +" "+ event.count);
+                minEvents.eventList.push({event:event, dist:0});
+            }else {
+                //find overlaps
+                var dist = event.time - aTime;
+                if ((dist > -minDist) && (dist < minDist)) {
+                    minEvents.eventList.push({event: event, dist: dist});
+                }
             }
-
         }
-        minEvents[key] = {player:raiddata.getPlayerByUID(ability.pid),ability:ability.ability,event:minEvent, dist:minDist};
+        for(var i = 0; i < phases.length; i++){
+            var phase = phases[i];
+            //find overlaps
+            var dist = phase.time - aTime;
+            if ((dist > -minDist) && (dist < minDist)) {
+                minEvents.eventList.push({event: phase, dist: dist});
+            }
+        }
+        processed[abilities[key].cid] = minEvents;
     }
-    for(key in minEvents) {
-        console.log(minEvents[key].player.name + "'s " + minEvents[key].ability.name + " used on " + minEvents[key].event.name +" "+minEvents[key].event.count);
+    this.opString = "";
+    for(key in processed) {
+        var entry = processed[key];
+        this.opString += (entry.player.name + "'s " + entry.ability.name);
+        this.opString += ' ';
+        for(var i = 0; i < entry.eventList.length; i++) {
+            if(entry.eventList[i].event.count !== undefined) {
+                this.opString += (entry.eventList[i].event.name + " " + entry.eventList[i].event.count);
+                this.opString += ' ';
+            }else{
+                this.opString += (entry.eventList[i].event.name);
+                this.opString += ' ';
+            }
+        }
     }
 
     //write to box
