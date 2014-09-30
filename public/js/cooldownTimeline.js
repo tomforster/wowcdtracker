@@ -169,7 +169,7 @@ wowcdapp.controller('timelineCtrl', function($scope, $rootScope, $modal, $window
             if(!ability.isready)
                 return
             tracker.addAbility(player.uid,ability.ability,self.time);
-            myOtherModal.hide();
+            modalboxAbilities.hide();
             self.update();
         }
         $scope.open = function(time) {
