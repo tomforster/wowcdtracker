@@ -232,10 +232,24 @@ wowcdapp.controller('timelineCtrl', function($scope, $rootScope, $modal, $window
     window.onresize = function(event) {
         self.timelineView.width = window.innerWidth-40;
         self.timelineNavView.width = window.innerWidth-40;
-        self.timelineView.lengthS = 5*60/1024*self.timelineView.width;
+        var lengthS = 5*60/1024*self.timelineView.width;
+        if(lengthS < self.timelineData.fightLength){
+            self.timelineView.lengthS = 5*60/1024*self.timelineView.width;
+        }
+        else{
+            self.timelineView.lengthS = self.timelineData.fightLength;
+        }
+
         self.update();
         $scope.$apply();
     };
+    var lengthS = 5*60/1024*self.timelineView.width;
+    if(lengthS < self.timelineData.fightLength){
+        self.timelineView.lengthS = 5*60/1024*self.timelineView.width;
+    }
+    else{
+        self.timelineView.lengthS = self.timelineData.fightLength;
+    }
 });
 
 //region To Be Refactored
