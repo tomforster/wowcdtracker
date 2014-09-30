@@ -162,7 +162,8 @@ wowcdapp.controller('timelineCtrl', function($scope, $rootScope, $modal, $window
 
         this.focus = -1;
         this.doubleclicked = false;
-        var myOtherModal = $modal({scope: $scope, template: 'partials/modalcds.html', show: false});
+        var modalboxPhases = $modal({scope: $scope, template: 'partials/modalphases.html', show: false});
+        var modalboxAbilities = $modal({scope: $scope, template: 'partials/modalcds.html', show: false});
         this.modalAbilities = [];
         $scope.selectCooldown = function(player,ability){
             if(!ability.isready)
@@ -202,7 +203,10 @@ wowcdapp.controller('timelineCtrl', function($scope, $rootScope, $modal, $window
                 lastUID = raidAbilities[i].uid;
             }
             self.modalAbilities.push(playerAbilities);
-            myOtherModal.$promise.then(myOtherModal.show);
+            modalboxAbilities.$promise.then(modalboxAbilities.show);
+        }
+        $scope.openPhases = function(){
+            modalboxPhases.$promise.then(modalboxPhases.show);
         }
 
         this.time = 0;

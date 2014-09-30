@@ -4,8 +4,14 @@
     padding-right:10px;
     padding-bottom:10px;
     padding-top:1px">
-    <h4>{{timeline.fightname}}</h4>
+    <h4 style="display: inline-block">{{timeline.fightname}}</h4>
     <p ng-if="!timeline.settingsState">Please select a fight from the Raid Setup tab.</p>
+    <input class="btn-default btn"
+           type="button"
+           value="Edit Phase Lengths"
+           style="float:right; display: inline-block"
+           ng-if="timeline.settingsState"
+            ng-click="openPhases()">
     <timelinenav ng-if="timeline.settingsState"></timelinenav>
     <timeline ng-if="timeline.settingsState"></timeline>
 </div>

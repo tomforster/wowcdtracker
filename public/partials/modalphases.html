@@ -1,0 +1,20 @@
+<div class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Setup Phase Lengths:</h4>
+            </div>
+            <div class="modal-body">
+                <ul>
+                    <li ng-repeat="phase in timeline.phases" class="ul_cd_List">
+                        <ul class="ul_cd_List">
+                            <li>{{phase.name}}</li>
+                            <!-- slider here -->
+                            <li><input type="text" value={{phase.duration}} readonly></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
