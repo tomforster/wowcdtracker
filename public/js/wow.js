@@ -437,7 +437,9 @@ wowcdapp.controller('userCtrl', function ($scope, $rootScope, $window, wowdata, 
     $rootScope.loadingView = false;
     this.fightlist = wowdata.fights;
     this.fightdata = fightdata;
-    this.fightdata.currentfight = this.fightlist[0];
+    if(this.fightdata.settingsState === 0){
+        this.fightdata.currentfight = this.fightlist[0];
+    }
     this.raid = raiddata;
     $scope.players = this.raid.players;
     this.classid = null;
