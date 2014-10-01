@@ -5,15 +5,19 @@
                 <h4 class="modal-title">Setup Phase Durations (NYI):</h4>
             </div>
             <div class="modal-body">
-                <ul>
-                    <li ng-repeat="phase in timeline.phases" class="ul_cd_List">
-                        <ul class="ul_cd_List">
-                            <li>{{phase.name}}</li>
-                            <!-- slider here -->
-                            <li><input type="text" value={{phase.duration}} readonly></li>
-                        </ul>
-                    </li>
-                </ul>
+                <div ng-repeat="phase in timeline.phases" class="form-group panel panel-default" style="padding:4px; width:100%">
+                    <label style="width:100%; padding: 0px 0px">
+                        <div style="display: inline-block">{{phase.name}}</div>
+                        <div style="display: inline-block; float:right">
+                            <input class="form-control" style="height:30px; display: inline-block; width:auto" type="number" value={{phase.duration}} ng-readonly="phase.fixed">
+                            <button data-title="Set to default" bs-tooltip style="float: right" class="btn btn-default glyphicon glyphicon-refresh" style="float: right" ng-click="" ng-disabled="phase.fixed"></button>
+                        </div>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" ng-click="$hide()">Close</button>
+                <button type="button" class="btn btn-primary" ng-click="$hide()">Save changes</button>
             </div>
         </div>
     </div>

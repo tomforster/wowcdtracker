@@ -54,7 +54,7 @@
                   ng-attr-width="{{timeline.timelineView.sToPx(event.duration) < 3 && 3 || timeline.timelineView.sToPx(event.duration)}}"
                   ng-attr-height={{timeline.timelineView.height-timeline.timelineView.axisPositionPx-event.phaseLevel*timeline.timelineView.phaseLabelHeightPx}}
                   class="event"
-                  bs-tooltip data-container="body" title={{event.name}} data-placement="top"
+                  bs-tooltip data-container="body" data-title={{event.name}} data-placement="top"
                     opacity="0.9"></rect>
         </g>
         <g id="abilitiesSVG">

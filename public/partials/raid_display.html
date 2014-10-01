@@ -35,7 +35,9 @@
                 </label>
             </div>
         </div>
-        <button class="btn btn-default glyphicon glyphicon-plus" style="float: right" ng-click="user.addPlayer()" title="Add player" bs-tooltip></button>
+        <div title="Add player" bs-tooltip style="float: right" >
+            <button class="btn btn-default glyphicon glyphicon-plus" ng-click="user.addPlayer()"  ng-disabled="user.raid.players.length === user.raid.raidsize"></button>
+        </div>
     </div>
     <!-- current raid -->
     <h5>Raid List <b>({{user.raid.players.length}}/{{user.raid.raidsize}})</b></h5>

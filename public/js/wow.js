@@ -317,7 +317,7 @@ wowcdapp.service('fightdata',function(){
         newEventList.sort(function(a, b){
             return a.time-b.time
         });
-        return {name:phase.name,time:time,duration:dur,events:newEventList,color:colors[colorIndex++]};
+        return {name:phase.name,time:time,duration:dur,events:newEventList,color:colors[colorIndex++],fixed:phase.fixed};
     }
 
     var recurse = function(phaseInfo,level){
