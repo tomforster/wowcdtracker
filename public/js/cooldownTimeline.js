@@ -279,12 +279,14 @@ wowcdapp.controller('timelineCtrl', function($scope, $rootScope, $modal, $window
         self.update();
         $scope.$apply();
     };
-    var lengthS = 5*60/1024*self.timelineView.width;
-    if(lengthS < self.timelineData.fightLength){
-        self.timelineView.lengthS = 5*60/1024*self.timelineView.width;
-    }
-    else{
-        self.timelineView.lengthS = self.timelineData.fightLength;
+    if(this.settingsState){
+        var lengthS = 5*60/1024*self.timelineView.width;
+        if(lengthS < self.timelineData.fightLength){
+            self.timelineView.lengthS = 5*60/1024*self.timelineView.width;
+        }
+        else{
+            self.timelineView.lengthS = self.timelineData.fightLength;
+        }
     }
 });
 
