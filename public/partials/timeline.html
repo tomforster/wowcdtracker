@@ -1,22 +1,8 @@
 <svg ng-attr-width={{timeline.timelineView.width}}
      ng-attr-height = {{timeline.timelineView.height}}
-     vbox="{{timeline.timelineView.x}} 0 {{timeline.timelineView.width}} {{timeline.timelineView.height}}"
      class="timeline"
-     id="tl" >
-    <g>
-        <g id="players">
-            <g ng-repeat="player in timeline.abilities">
-                <image xlink:href="~/Content/Empty.png"
-                        ngxlink="img/specicons/{{player.icon}}"
-                       ng-attr-x="s0"
-                       ng-attr-y={{timeline.timelineView.axisPositionPx+timeline.timelineView.levelheightPx*$index+timeline.timelineView.gapsize*($index+1)}}
-                       ng-attr-width={{timeline.timelineView.widthNamesAreaPx}}
-                       ng-attr-height={{timeline.timelineView.levelheightPx}}
-                       bs-tooltip data-container="body" title={{player.name}} data-placement="top"></image>
-            </g>
-        </g>
-    </g>
-    <g ng-attr-transform="translate({{timeline.timelineView.widthNamesAreaPx}},0)">
+     id="tl">
+    <g ng-attr-transform="translate({{timeline.timelineView.widthNamesAreaPx-timeline.timelineView.x}},0)">
         <g id="phases">
             <g ng-repeat="phase in timeline.phases">
                 <rect ng-attr-x={{timeline.timelineView.sToPx(phase.time)}}
@@ -71,7 +57,7 @@
                   bs-tooltip data-container="body" title={{event.name}} data-placement="top"
                     opacity="0.9"></rect>
         </g>
-        <g id="abilities">
+        <g id="abilitiesSVG">
             <g ng-repeat="player in timeline.abilities">
                 <g ng-repeat="abilityEntry in player.abilityArray">
                     <rect ng-attr-x={{timeline.timelineView.sToPx(abilityEntry.time)}}
@@ -127,6 +113,26 @@
                 </g>
             </g>
         </g>
-
+    </g>
+    <g id="players">
+        <g ng-repeat="player in timeline.abilities">
+            <image xlink:href="~/Content/Empty.png"
+                   ngxlink="img/specicons/{{player.icon}}"
+                   ng-attr-x="0"
+                   ng-attr-y={{timeline.timelineView.axisPositionPx+timeline.timelineView.levelheightPx*$index+timeline.timelineView.gapsize*($index+1)}}
+                   ng-attr-width={{timeline.timelineView.widthNamesAreaPx}}
+                   ng-attr-height={{timeline.timelineView.levelheightPx}}
+                   bs-tooltip data-container="body" title={{player.name}} data-placement="top"></image>
+        </g>
+    </g>
+    <g id="scrollbar">
+        <rect ng-if="timeline.showScrollBar" ng-attr-x={{timeline.timelineView.width-25}}
+              ng-attr-y={{timeline.timelineView.axisPositionPx+timeline.timelineView.gapsize}}
+              ng-attr-width={{15}}
+              ng-attr-height={{timeline.timelineView.height-timeline.timelineView.axisPositionPx-timeline.timelineView.gapsize*2-timeline.timelineView.phaseLabelHeightPx*timeline.numPhaselevels}}
+              style="fill:black; opacity:.4"
+              ng-attr-rx={{timeline.timelineView.corner}}
+              ng-attr-ry={{timeline.timelineView.corner}}
+              pointer-events="none"></rect>
     </g>
 </svg>

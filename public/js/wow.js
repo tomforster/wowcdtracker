@@ -186,7 +186,6 @@ wowcdapp.service('raiddata',function(wowdata,localStorageService){
 });
 wowcdapp.service('tracker',function(wowdata,raiddata){
     var id = 0;
-    var max_level = 6;
     var abilityEntries = [];
 
     this.getAvailableAbilities = function(time){
@@ -240,21 +239,6 @@ wowcdapp.service('tracker',function(wowdata,raiddata){
         }
     }
 
-    /*var isLevelAvailable = function(level,time,duration){
-        //is there a free spot on this level?
-        var abilityLevel = level;
-        for(var i = 0; i < abilityLevel.length; i++){
-            var t1,t2,d1,d2;
-            t1 = abilityEntries[abilityLevel[i]].time;
-            d1 = abilityEntries[abilityLevel[i]].ability.duration;
-            t2 = time;
-            d2 = duration;
-            if(!((t2 > (t1+d1) || ((t2+d2) < t1)))){
-                return false;
-            }
-        }
-        return true;
-    }*/
     var populateLevels = function(sortType){
         var timelineLevels = {};
         //abilityEntries.sort(function(a,b){return b.ability.duration - a.ability.duration});
@@ -333,7 +317,7 @@ wowcdapp.service('fightdata',function(){
         newEventList.sort(function(a, b){
             return a.time-b.time
         });
-        return {name:phase.name,time:time,duration:dur,events:newEventList,level:0,color:colors[colorIndex++]};
+        return {name:phase.name,time:time,duration:dur,events:newEventList,color:colors[colorIndex++]};
     }
 
     var recurse = function(phaseInfo,level){

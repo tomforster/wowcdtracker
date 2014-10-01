@@ -38,7 +38,7 @@
         <button class="btn btn-default glyphicon glyphicon-plus" style="float: right" ng-click="user.addPlayer()" title="Add player" bs-tooltip></button>
     </div>
     <!-- current raid -->
-    <h5>Raid List</h5>
+    <h5>Raid List <b>({{user.raid.players.length}}/{{user.raid.raidsize}})</b></h5>
     <div ng-repeat="player in user.raid.players track by $index" class="form-group panel panel-default" style="padding:4px; width:100%">
         <!-- player name -->
         <input type="text" ng-model="player.name" class="form-control" style="height:30px" >

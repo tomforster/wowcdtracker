@@ -124,7 +124,7 @@ wowcdapp.controller('timelineCtrl', function($scope, $rootScope, $modal, $window
         //dimension data
         this.timelineView = {
             width:window.innerWidth-40,
-            height:500,
+            height:window.innerHeight-400,
             startS:0,
             lengthS:(5*60/1024)*(window.innerWidth-40),
             x:0,
@@ -177,6 +177,8 @@ wowcdapp.controller('timelineCtrl', function($scope, $rootScope, $modal, $window
             self.timelineNavView.gnavx = self.timelineNavView.sToPx(newTime);
             $scope.$apply();
         }
+        this.focus = -1;
+        this.doubleclicked = false;
         self.doubleclickedTarget = -1;
         $scope.setFocus = function(cid){
             if((self.doubleclicked) && (cid === self.doubleclickedTarget)){
@@ -204,8 +206,6 @@ wowcdapp.controller('timelineCtrl', function($scope, $rootScope, $modal, $window
             }
         }
 
-        this.focus = -1;
-        this.doubleclicked = false;
         var modalboxPhases = $modal({scope: $scope, template: 'partials/modalphases.html', show: false});
         var modalboxAbilities = $modal({scope: $scope, template: 'partials/modalcds.html', show: false});
         this.modalAbilities = [];
@@ -254,7 +254,7 @@ wowcdapp.controller('timelineCtrl', function($scope, $rootScope, $modal, $window
         }
 
         this.time = 0;
-
+        this.showScrollBar = false;
         this.update = function(){
             var numTicks = this.timelineData.fightLength/self.timelineView.tickLengthS;
 
@@ -268,6 +268,15 @@ wowcdapp.controller('timelineCtrl', function($scope, $rootScope, $modal, $window
             this.phases = this.timelineData.getPhaseList();
             this.events = this.timelineData.getEventList();
             this.abilities = tracker.getDrawInfo('c');
+
+            this.numPhaselevels = Math.max.apply(Math,this.phases.map(function(val){return val.phaseLevel}))+1;
+            var reqH = Object.keys(this.abilities).length*(this.timelineView.levelheightPx+this.timelineView.gapsize)+this.timelineView.gapsize;
+            var currH = this.timelineView.height-this.timelineView.axisPositionPx-this.timelineView.phaseLabelHeightPx*this.numPhaselevels;
+            if(reqH > currH){
+                this.showScrollBar = true;
+            }else{
+                this.showScrollBar = false;
+            }
         }
         this.update();
     }
@@ -275,6 +284,7 @@ wowcdapp.controller('timelineCtrl', function($scope, $rootScope, $modal, $window
 
     window.onresize = function(event) {
         self.timelineView.width = window.innerWidth-40;
+        self.timelineView.height = window.innerHeight-400;
         self.timelineNavView.width = window.innerWidth-40;
         var lengthS = 5*60/1024*self.timelineView.width;
         if(lengthS < self.timelineData.fightLength){
@@ -282,6 +292,9 @@ wowcdapp.controller('timelineCtrl', function($scope, $rootScope, $modal, $window
         }
         else{
             self.timelineView.lengthS = self.timelineData.fightLength;
+        }
+        if(self.timelineView.height < 100){
+            self.timelineView.height = 100;
         }
 
         self.update();
@@ -295,22 +308,8 @@ wowcdapp.controller('timelineCtrl', function($scope, $rootScope, $modal, $window
         else{
             self.timelineView.lengthS = self.timelineData.fightLength;
         }
+        if(self.timelineView.height < 100){
+            self.timelineView.height = 100;
+        }
     }
 });
-
-//region To Be Refactored
-        //check is this a valid position
-        /*if(!isAbilityAvailable(self.abilities[attr].pid,self.abilities[attr].ability,self.abilities[attr].time,false))
-        {
-            //if no, reinstate either starting or last valid position
-            //todo:bounds check
-            if(self.abilities[attr].time < lastCollision.time)
-                self.abilities[attr].time = lastCollision.time - lastCollision.ability.cooldown;
-            else
-                self.abilities[attr].time = lastCollision.time + lastCollision.ability.cooldown;
-            //if time in bounds?
-        }
-        if((self.abilities[attr].time < 0) ||(self.abilities[attr].time > timelineView.fightLength)){
-            self.abilities[attr].time = startTime;
-        }*/
-//endregion
