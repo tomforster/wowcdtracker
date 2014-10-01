@@ -177,23 +177,31 @@ wowcdapp.controller('timelineCtrl', function($scope, $rootScope, $modal, $window
             self.timelineNavView.gnavx = self.timelineNavView.sToPx(newTime);
             $scope.$apply();
         }
+        self.doubleclickedTarget = -1;
         $scope.setFocus = function(cid){
-            if(self.focus === cid){
-                if(self.doubleclicked){
-                    //delete it
-                    tracker.removeAbility(self.focus);
-                    self.update();
-                    self.doubleclicked = false;
-                }
-                self.focus = -1;
-            }else{
-                self.focus = cid;
+            if((self.doubleclicked) && (cid === self.doubleclickedTarget)){
+                //delete it
+                tracker.removeAbility(self.doubleclickedTarget);
+                self.update();
+                self.doubleclicked = false;
+                self.doubleclickedTarget = -1;
+                $scope.$apply();
+            }else if((self.doubleclicked) && (cid !== self.doubleclickedTarget)){
+                //restart the timer on the new element
+                if(self.timer) $timeout.cancel(self.timer);
                 self.doubleclicked = true;
-                $timeout(function(){
+                self.doubleclickedTarget = cid;
+                self.timer = $timeout(function(){
                     self.doubleclicked = false;
                 },250);
+            }else{
+                self.doubleclicked = true;
+                self.doubleclickedTarget = cid;
+                if(self.timer) $timeout.cancel(self.timer);
+                self.timer = $timeout(function () {
+                    self.doubleclicked = false;
+                }, 250);
             }
-            $scope.$apply();
         }
 
         this.focus = -1;
