@@ -272,15 +272,14 @@ wowcdapp.service('tracker',function(wowdata,raiddata){
             abilityEntries.forEach(function(abilityEntry,ind){
                 timelineLevels[abilityEntry.pid].abilityArray[abilityEntry.cid]=abilityEntry;
             });
-            level = 0;
-            for(entry in timelineLevels){
-                timelineLevels[entry].level = level++;
-            }
-            //timelineLevels.sort(function(a,b){return a.pid - b.pid});
         }else if(sortType === 'a') {
             abilityEntries.forEach(function(abilityEntry,ind){
                 timelineLevels[abilityEntry.cid]=abilityEntry;
             });
+        }
+        level = 0;
+        for(entry in timelineLevels){
+            timelineLevels[entry].level = level++;
         }
         return timelineLevels;
     }

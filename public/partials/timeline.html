@@ -75,7 +75,7 @@
             <g ng-repeat="player in timeline.abilities">
                 <g ng-repeat="abilityEntry in player.abilityArray">
                     <rect ng-attr-x={{timeline.timelineView.sToPx(abilityEntry.time)}}
-                          ng-attr-y={{timeline.timelineView.axisPositionPx+timeline.timelineView.levelheightPx*$parent.$index+timeline.timelineView.gapsize*($parent.$index+1)}}
+                          ng-attr-y={{timeline.timelineView.axisPositionPx+timeline.timelineView.levelheightPx*player.level+timeline.timelineView.gapsize*(player.level+1)}}
                           ng-attr-width={{timeline.timelineView.sToPx(abilityEntry.ability.cooldown)}}
                           ng-attr-height={{timeline.timelineView.levelheightPx}}
                           style="fill:#{{abilityEntry.ability.colour}}; opacity:.3"
