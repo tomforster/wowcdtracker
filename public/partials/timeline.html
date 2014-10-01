@@ -1,7 +1,8 @@
 <svg ng-attr-width={{timeline.timelineView.width}}
      ng-attr-height = {{timeline.timelineView.height}}
      vbox="{{timeline.timelineView.x}} 0 {{timeline.timelineView.width}} {{timeline.timelineView.height}}"
-     class="timeline">
+     class="timeline"
+     id="tl" >
     <g>
         <g id="players">
             <g ng-repeat="player in timeline.abilities">

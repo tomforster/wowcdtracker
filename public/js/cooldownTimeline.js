@@ -8,6 +8,13 @@ wowcdapp.directive('timeline', function(){
         link: function(scope, element, attrs) {
             element.on("click", function(event){
                 //console.log("clicked timeline");
+                var svg = document.querySelector('#tl');
+                var pt = svg.createSVGPoint()
+                pt.x = event.clientX;
+                pt.y = event.clientY;
+                var p = pt.matrixTransform(svg.getScreenCTM().inverse())
+                event.offsetX= p.x;
+                event.offsetY= p.y;
                 scope.open(event.offsetX);
             })
         }
@@ -19,6 +26,9 @@ wowcdapp.directive('draggable', function($document){
         link: function(scope,element,attrs){
             var start = {x:0,y:0};
             var mousemoved = false;
+            var svg = document.querySelector('#tln');
+            var pt = svg.createSVGPoint()
+
             //capture clicks
             element.on("click", function(event){
                 //console.log('clicked draggable');
@@ -35,10 +45,23 @@ wowcdapp.directive('draggable', function($document){
                 scope.setFocus(attrs.handle);
                 event.preventDefault();
                 event.stopPropagation();
+
+                pt.x = event.clientX;
+                pt.y = event.clientY;
+                var p = pt.matrixTransform(svg.getScreenCTM().inverse())
+                event.offsetX= p.x;
+                event.offsetY= p.y;
+
                 start.x = event.offsetX;
                 start.y = event.offsetY;
                 //setfocus, or toggle
                 $document.on("mousemove",function(event){
+                    pt.x = event.clientX;
+                    pt.y = event.clientY;
+                    var p = pt.matrixTransform(svg.getScreenCTM().inverse())
+                    event.offsetX= p.x;
+                    event.offsetY= p.y;
+
                     mousemoved = true;
                     event.preventDefault();
                     event.stopPropagation();
@@ -67,10 +90,23 @@ wowcdapp.directive('timelinenav', function(){
         restrict: 'E',
         templateUrl: 'partials/timelinenav.html',
         link: function(scope, element, attrs) {
+            var svg = document.querySelector('#tln');
+            var pt = svg.createSVGPoint()
+
             element.on("click", function(event){
+                pt.x = event.clientX;
+                pt.y = event.clientY;
+                var p = pt.matrixTransform(svg.getScreenCTM().inverse())
+                event.offsetX= p.x;
+                event.offsetY= p.y;
                 scope.setWindow(event.offsetX);
             })
             element.on("mousemove", function(event){
+                pt.x = event.clientX;
+                pt.y = event.clientY;
+                var p = pt.matrixTransform(svg.getScreenCTM().inverse())
+                event.offsetX= p.x;
+                event.offsetY= p.y;
                 scope.setGhost(event.offsetX);
             })
         }

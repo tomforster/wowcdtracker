@@ -1,7 +1,8 @@
 <svg ng-attr-width={{timeline.timelineNavView.width}}
      ng-attr-height = {{timeline.timelineNavView.height}}
      vbox="0 0 {{timeline.timelineNavView.width}} {{timeline.timelineNavView.height}}"
-     class="timeline">
+     class="timeline"
+        id="tln">
     <g id="phases">
         <g ng-repeat="phase in timeline.phases">
             <rect ng-attr-x={{timeline.timelineNavView.sToPx(phase.time)}}
