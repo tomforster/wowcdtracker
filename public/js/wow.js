@@ -290,7 +290,7 @@ wowcdapp.service('tracker',function(wowdata,raiddata){
     this.cullRemoved = function(){
         abilityEntries.forEach(function(abilityEntry,cid){
             if(raiddata.getPlayerByUID(abilityEntry.pid) === null){
-                abilityEntries.splice(getAbilityEntryIndex(cid),1);
+                abilityEntries.splice(cid,1);
                 console.log("removed orphan ability data");
             }
         });

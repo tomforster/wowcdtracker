@@ -55,7 +55,8 @@
                       class="axisline"></line>
                 <text ng-attr-x="{{timeline.tickLengthPx*$index+1}}"
                       ng-attr-y="{{timeline.timelineView.labelPositionPx}}"
-                      style="font-size:12">
+                      style="font-size:12"
+                        pointer-events="none">
                     {{tick}}
                 </text>
             </g>
