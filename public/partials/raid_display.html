@@ -29,6 +29,7 @@
                     <img class="raidicon"
                          ng-attr-src="img/specicons/{{user.getSpecById(wowspec).wowicon}}"
                          title={{user.getSpecById(wowspec).name}}
+                         ng-class="(user.specid === null) ? 'nofilter' : ''"
                          bs-tooltip>
                     </img>
                 </label>
